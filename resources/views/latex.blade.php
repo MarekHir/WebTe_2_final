@@ -6,7 +6,7 @@
 
         <title>Latex</title>
 
-{{--        <script src="{{ asset('node_modules/mathjax/es5/tex-mml-chtml.js') }}"></script>--}}
+        <script src="{{ asset('node_modules/mathjax/es5/tex-mml-chtml.js') }}"></script>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -18,10 +18,11 @@
     <body class="antialiased">
 
         <div id="latex">
-
+            {!! $latex !!}
         </div>
         <script>
-            // MathJax.typesetPromise(["#latex"]);
+            MathJax.typesetPromise(["#latex"]);
         </script>
 
     </body>
+</html>
