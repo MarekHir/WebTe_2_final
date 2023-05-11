@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LatexController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,3 +30,14 @@ Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
 
 Route::get('/test',[TestController::class, 'index']);
+
+// Latex parse files route
+/*Route::get('/latex', function () {
+    // Your code to extract the data from the LaTeX file goes here
+
+    return view('latex', compact('sections'));
+});*/
+
+// Latex parse files route
+Route::get('latex', [LatexController::class, 'extractData'])->name('latex.extractData');
+
