@@ -3,55 +3,40 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Xemlock\LaTeX\Parser\Parser;
+//use PhpLatex_Parser;
+//use PhpLatex_Renderer_Html;
+
+use Symfony\Component\Process\Process;
 
 
 class LatexController extends Controller
 {
 
-    public function extractData() {
+    public function extractData(Request $request) {
 
+        $file_name = $request->input('name');
         // Read the contents of the LaTeX file
-        $file_contents = file_get_contents('../public/LatexFiles/blokovka01pr.tex');
+        // $file_contents = file_get_contents('../public/LatexFiles/blokovka01pr.tex');
+        $file_path = '../public/LatexFiles/' . $file_name . '.tex';
 
-        $parser = new Parser($file_contents);
+        $process = new Process(['python', '../../resources/python/latexParser.py', $file_path]);
+        $process->run();
 
-        // Get the parsed content
-        $parsed_content = $parser->parse()->getContent();
+        $output = $process->getOutput();
+        $return_var = $process->getExitCode();
 
-        // Pass the LaTeX content to the view
-        return view('latex', ['latex' => $file_contents]);
+        return view('latex', ['latex' => $output]);
 
-        /*// Read the contents of the file
-        $file_path = public_path('../public/LatexFiles/blokovka01pr.tex');
-        $file_contents = file_get_contents($file_path);
-
-        // Create a new instance of the Parser
-        //$parser = new Parser();
+        /*//$parser = new Parser($file_contents);
         $parser = new PhpLatex_Parser();
 
-        // Parse the file contents into a document object
-        $document = $parser->parse($file_contents);
+        // Get the parsed content
+        $parsed_content = $parser->parse($file_contents);
 
-        var_dump($document);
+        $htmlRenderer = new PhpLatex_Renderer_Html();
+        $html = $htmlRenderer->render($parsed_content);
 
-        // Extract the sections, tasks, and solutions
-        $sections = $document->getElementsByName('section');
-        foreach ($sections as $section) {
-            $section_title = $section->getTitle();
-
-            $tasks = $section->getElementsByName('task');
-            foreach ($tasks as $task) {
-                $task_content = $task->getContent();
-
-                $solutions = $task->getElementsByName('solution');
-                foreach ($solutions as $solution) {
-                    $solution_content = $solution->getContent();
-                }
-            }
-        }
-
-        return view('latex', $sections);*/
-        
+        // Pass the LaTeX content to the view
+        return view('latex', ['latex' => $html]);*/
     }
 }
