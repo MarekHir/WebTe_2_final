@@ -1,7 +1,6 @@
 import re
 import os
 import sys
-# import subprocess
 from pylatexenc.latex2text import LatexNodes2Text
 
 def read_file(path):
@@ -14,8 +13,6 @@ path = sys.argv[1]
 
 # Call the function with the provided path argument
 data = read_file(path)
-
-# ('C:/Users/42191/Desktop/zaverecne_zadanie/odozva01pr.tex', 'r', encoding='utf-8')
 
 parsed_tasks = []
 
@@ -38,10 +35,11 @@ for section in sections:
     # Parse the picture PATH
     if "\includegraphics" in section:
         graphics = re.findall(r'\\includegraphics{(.*?)}', section)
-        parsed_task['picture_path'] = graphics[0]
+        picture_name = os.path.basename(graphics[0])
+        parsed_task['picture_name'] = picture_name
 
     # Assign whole task description (text + function)
-    if "begin{equation*}" in section:
+    if "begin{equation*}" in section and listOfStrings[2] != "< g r a p h i c s >":
         parsed_task['task'] = listOfStrings[1] + ' ' + listOfStrings[2]
     else:
         parsed_task['task'] = listOfStrings[1]
@@ -51,10 +49,3 @@ for section in sections:
     parsed_tasks.append(parsed_task)
 
 print(parsed_tasks)
-
-# for task in parsed_tasks:
-#     print(task)
-
-# Run the PHP script and pass the output of the Python script to it
-# process = subprocess.Popen(['php', 'test.php'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-# output, error = process.communicate(b'Hello from Python')

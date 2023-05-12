@@ -33,4 +33,4 @@ Route::get('/test',[TestController::class, 'index']);
 
 // Latex parse files route
 Route::get('latex/{name}', [LatexController::class, 'extractData'])->name('latex.extractData');
-
+Route::get('latex', [LatexController::class, 'renderSite'])->name('latex.renderSite');
