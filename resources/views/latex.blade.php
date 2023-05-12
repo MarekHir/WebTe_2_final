@@ -18,7 +18,7 @@
     <body class="antialiased">
 
         <div id="latex">
-            {!! $latex !!}
+
         </div>
         <script>
             // MathJax.typesetPromise(["#latex"]);

@@ -12,20 +12,16 @@ use Symfony\Component\Process\Process;
 
 class LatexController extends Controller
 {
-    private LatexParseService $parseService;
+    //private LatexParseService $parseService;
 
     public function extractData(Request $request, $fileName) {
+        //$this->parseService = app(LatexParseService::class);
         $parseService = app(LatexParseService::class);
+        $parseService->run($fileName);
+        //return view('latex', ['latex' => $output]);
+    }
 
-        $file_path = base_path('public/LatexFiles/') . $fileName . '.tex';
-
-        $process = new Process(['python3', base_path('python_files/latexParser.py'), $file_path]);
-        $process->run();
-
-
-        $output = $process->getOutput();
-        $return_var = $process->getExitCode();
-
-        return view('latex', ['latex' => $output]);
+    public function renderSite() {
+        return view('latex');
     }
 }
