@@ -12,9 +12,8 @@ use Symfony\Component\Process\Process;
 class LatexController extends Controller
 {
 
-    public function extractData(Request $request) {
+    public function extractData(Request $request, $fileName) {
 
-        $file_name = $request->input('name');
         // Read the contents of the LaTeX file
         // $file_contents = file_get_contents('../public/LatexFiles/blokovka01pr.tex');
         $file_path = '../public/LatexFiles/' . $file_name . '.tex';
@@ -26,17 +25,5 @@ class LatexController extends Controller
         $return_var = $process->getExitCode();
 
         return view('latex', ['latex' => $output]);
-
-        /*//$parser = new Parser($file_contents);
-        $parser = new PhpLatex_Parser();
-
-        // Get the parsed content
-        $parsed_content = $parser->parse($file_contents);
-
-        $htmlRenderer = new PhpLatex_Renderer_Html();
-        $html = $htmlRenderer->render($parsed_content);
-
-        // Pass the LaTeX content to the view
-        return view('latex', ['latex' => $html]);*/
     }
 }
