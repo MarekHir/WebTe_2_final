@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\LatexParseService;
 use Illuminate\Http\Request;
 //use PhpLatex_Parser;
 //use PhpLatex_Renderer_Html;
@@ -20,6 +21,7 @@ class LatexController extends Controller
 
         $process = new Process(['python', '../../resources/python/latexParser.py', $file_path]);
         $process->run();
+
 
         $output = $process->getOutput();
         $return_var = $process->getExitCode();
