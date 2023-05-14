@@ -20,4 +20,10 @@ class LangController extends Controller
         App::setLocale($lang);
         return view('welcome');
     }
+
+    public function translate($lang, $path = null)
+    {
+        $translatedString = trans('project.test', []);
+        return response()->json(['message' => $translatedString]);
+    }
 }

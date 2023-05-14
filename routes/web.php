@@ -22,7 +22,6 @@ Route::get('/', function () {
 
 Route::post('/changeLang', [LangController::class, 'changeLang'])->name('changeLang')->middleware(['setLang']);
 
-//Route::get('/{lang}', [LangController::class, 'returnLang'])->middleware(['setLang']);
 
 // Authentication Routes...
 Route::get('login', [AuthController::class, 'index'])->name('login');
