@@ -35,7 +35,9 @@ class LatexParseService extends AbstractService
             $exercise->section_title = $json['section_title'];
             $exercise->task = $json['task'];
             $exercise->solution = $json['solution'];
-            $exercise->picture_name = $json['picture_name'];
+            if (array_key_exists('picture_name', $json)){
+                $exercise->picture_name = $json['picture_name'];
+            }
             $exercise->points = 6;
             $exercise->save();
         }

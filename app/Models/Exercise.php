@@ -17,4 +17,8 @@ class Exercise extends Model
         'picture_name',
         'points'
     ];
+
+    protected $nullable = [
+        'picture_name'
+    ];
 }
