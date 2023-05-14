@@ -18,7 +18,11 @@ use App\Http\Controllers\LatexController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->middleware(['setLang']);
+
+Route::post('/changeLang', [LangController::class, 'changeLang'])->name('changeLang')->middleware(['setLang']);
+
+//Route::get('/{lang}', [LangController::class, 'returnLang'])->middleware(['setLang']);
 
 // Authentication Routes...
 Route::get('login', [AuthController::class, 'index'])->name('login');
