@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ExercisesListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,8 +21,12 @@ Route::group(['middleware' => ['auth:sanctum']],
         Route::get('user', function (Request $request) {
             return $request->user();
         });
+        Route::group(['prefix' => 'teacher'], function () {
+            Route::post('exercise-list', [ExercisesListController::class, 'store']);
+        });
     }
 );
+
 Route::group(['prefix' => 'auth'],
     function () {
         Route::post('login', [AuthController::class, 'login']);

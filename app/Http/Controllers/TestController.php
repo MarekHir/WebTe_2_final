@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\User;
 
 class TestController extends Controller
 {
     public function index()
     {
-        return 'Hello World';
+        return response()->json(User::get()->last()->isTeacher());
     }
 }

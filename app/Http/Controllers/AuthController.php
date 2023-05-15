@@ -22,7 +22,7 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed'
         ]);
-        $password = $data['password'];
+
         $data['password'] = Hash::make($data['password']);
 
         $user = User::create($data);
@@ -71,6 +71,7 @@ class AuthController extends Controller
     {
         $request->session()->regenerate();
 
+        // TODO: Add trans key for session refreshed
         return response()->json(['info' => 'refreshed']);
     }
 }

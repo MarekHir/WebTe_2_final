@@ -1,6 +1,7 @@
 import re
 import os
 import sys
+import json
 from pylatexenc.latex2text import LatexNodes2Text
 from sympy.parsing.latex import parse_latex
 
@@ -60,8 +61,8 @@ for section in sections:
     else:
         parsed_task['task'] = listOfStrings[1] + ' ' + str(task_equation.args[1])
 
-    parsed_task['solution'] = solution_equation.args[1]
+    parsed_task['solution'] = str(solution_equation.args[1])
 
     parsed_tasks.append(parsed_task)
 
-print(parsed_tasks)
+print(json.dumps(parsed_tasks))

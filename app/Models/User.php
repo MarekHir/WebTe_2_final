@@ -12,6 +12,20 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isTeacher(): bool
+    {
+        return $this->role === 'teacher';
+    }
+    public function isStudent(): bool
+    {
+        return $this->role === 'student';
+    }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -21,6 +35,7 @@ class User extends Authenticatable
     protected $enum = [
         'role' => ['student', 'teacher', 'admin'],
     ];
+
     protected $fillable = [
         'first_name',
         'surname',
