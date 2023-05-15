@@ -2,77 +2,75 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Session;
+
 use App\Models\User;
-use Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
+use \Illuminate\Http\JsonResponse;
+
 
 class AuthController extends Controller
 {
-    public function index()
+    // TODO: Http codes and validation
+    public function registration(Request $request): JsonResponse
     {
-        return view('auth.login');
+        $data = $request->validate([
+            'first_name' => 'required|string|min:2|max:255',
+            'surname' => 'required|string|min:2|max:255',
+            'role' => 'required|string|in:student,teacher',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed'
+        ]);
+        $password = $data['password'];
+        $data['password'] = Hash::make($data['password']);
+
+        $user = User::create($data);
+
+        if($user) {
+            $request->session()->regenerate();
+
+            return response()->json([
+                'message' => trans('auth.register.success'),
+                'user' => $user
+            ]);
+        }
+
+        return response()->json([
+            'message' => trans('auth.register.failed')
+        ], 422);
     }
 
-    public function registration()
+    public function login(Request $request): JsonResponse
     {
-        return view('auth.registration');
-    }
-
-    public function postLogin(Request $request)
-    {
-        $request->validate([
-            'email' => 'required',
-            'password' => 'required',
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
         ]);
 
-        $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials)) {
-            return redirect()->intended('dashboard')
-                ->withSuccess('You have Successfully loggedin');
+            $request->session()->regenerate();
+
+            return response()->json([
+                'message' => trans('auth.login.success'),
+                'user' => Auth::user()
+            ]);
         }
 
-        return redirect("login")->withSuccess('Oppes! You have entered invalid credentials');
+        return response()->json(['message' => trans('auth.login.failed')], 401);
     }
 
-    public function postRegistration(Request $request)
+    public function logout(Request $request): JsonResponse
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
-        ]);
+        $request->session()->invalidate();
 
-        $data = $request->all();
-        $check = $this->create($data);
-
-        return redirect("dashboard")->withSuccess('Great! You have Successfully loggedin');
+        return response()->json(['message' => trans('auth.logout.success')]);
     }
 
-    public function dashboard()
+    public function refresh(Request $request): JsonResponse
     {
-        if(Auth::check()){
-            return view('dashboard');
-        }
+        $request->session()->regenerate();
 
-        return redirect("login")->withSuccess('Opps! You do not have access');
-    }
-
-    public function create(array $data)
-    {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password'])
-        ]);
-    }
-
-    public function logout() {
-        Session::flush();
-        Auth::logout();
-
-        return Redirect('login');
+        return response()->json(['info' => 'refreshed']);
     }
 }

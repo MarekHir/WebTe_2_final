@@ -17,8 +17,14 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+    protected $enum = [
+        'role' => ['student', 'teacher'],
+    ];
     protected $fillable = [
-        'name',
+        'first_name',
+        'surname',
+        'role',
         'email',
         'password',
     ];
@@ -29,8 +35,12 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
+        'id',
         'password',
         'remember_token',
+        'created_at',
+        'updated_at',
+        'email_verified_at'
     ];
 
     /**
@@ -39,6 +49,6 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_verified_at' => 'datetime'
     ];
 }
