@@ -19,7 +19,7 @@ class User extends Authenticatable
      */
 
     protected $enum = [
-        'role' => ['student', 'teacher'],
+        'role' => ['student', 'teacher', 'admin'],
     ];
     protected $fillable = [
         'first_name',
