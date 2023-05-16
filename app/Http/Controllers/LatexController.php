@@ -2,41 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Exercise;
+use App\Services\EquationComparatorService;
+use App\Services\LatexParseService;
 use Illuminate\Http\Request;
-//use PhpLatex_Parser;
-//use PhpLatex_Renderer_Html;
-
-use Symfony\Component\Process\Process;
-
 
 class LatexController extends Controller
 {
 
     public function extractData(Request $request) {
+        $parseService = app(LatexParseService::class);
+        $validateData = $request->validate([
+            'fileName' => 'required'
+        ]);
+        $parseService->run($validateData['fileName']);
+    }
 
-        $file_name = $request->input('name');
-        // Read the contents of the LaTeX file
-        // $file_contents = file_get_contents('../public/LatexFiles/blokovka01pr.tex');
-        $file_path = '../public/LatexFiles/' . $file_name . '.tex';
-
-        $process = new Process(['python', '../../resources/python/latexParser.py', $file_path]);
-        $process->run();
-
-        $output = $process->getOutput();
-        $return_var = $process->getExitCode();
-
-        return view('latex', ['latex' => $output]);
-
-        /*//$parser = new Parser($file_contents);
-        $parser = new PhpLatex_Parser();
-
-        // Get the parsed content
-        $parsed_content = $parser->parse($file_contents);
-
-        $htmlRenderer = new PhpLatex_Renderer_Html();
-        $html = $htmlRenderer->render($parsed_content);
-
-        // Pass the LaTeX content to the view
-        return view('latex', ['latex' => $html]);*/
+    public function compareEquations(Request $request) {
+        $validateData = $request->validate([
+            'id' => 'required',
+            'inputEquation' => 'required'
+        ]);
+        //dd($validateData);
+        $compareService = app(EquationComparatorService::class);
+        $exercise = Exercise::where('id', $validateData['id'])->first();
+        $solution = $exercise->solution;
+        //dd($solution);
+        $jsonData = $compareService->run($solution, $validateData['inputEquation']);
+        return response()->json($jsonData);
     }
 }
