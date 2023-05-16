@@ -2,31 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use \TCPDF;
+use App\Models\Pdf;
+use Parsedown;
 
 class PdfController extends Controller
 {
     public function generatePdf()
     {
-        // Create new PDF document
-        $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+        $markdown = '# Heading 1' . PHP_EOL . 'Some **bold** and *italic* text.';
 
-        // Set document information
-        $pdf->SetCreator(PDF_CREATOR);
-        $pdf->SetAuthor('MMMM');
-        $pdf->SetTitle('project.title');
-        $pdf->SetSubject('PDF Subject');
-        $pdf->SetKeywords('TCPDF, PDF, example, test, guide');
+        $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
 
-        // Add a page
+        $pdf->SetCreator('Your Name');
+        $pdf->SetAuthor('Your Name');
+        $pdf->SetTitle('Markdown to PDF');
+
         $pdf->AddPage();
 
-        // Set some content
-        $pdf->SetFont('freeserif', 'B', 20, '', true);
-        $pdf->Cell(0, 10, trans('project.pdfText'), 0, 1);
+        $parsedown = new Parsedown();
+        $html = $parsedown->text($markdown);
 
-        // Output the PDF as a download
-        $pdf->Output('example.pdf', 'D');
+        $pdf->SetFont('helvetica', '', 11);
+
+        $pdf->writeHTML($html);
+
+        $pdf->Output('example.pdf', 'I');
+
     }
 }
