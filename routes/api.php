@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\ExercisesController;
-use App\Http\Controllers\ExercisesSetsController;
 use App\Http\Controllers\InstructionsController;
 use App\Http\Controllers\StudentsController;
 use Illuminate\Http\Request;
