@@ -3,6 +3,7 @@ import os
 import sys
 import json
 from pylatexenc.latex2text import LatexNodes2Text
+from sympy import Equality
 from sympy.parsing.latex import parse_latex
 
 def read_file(path):
@@ -39,12 +40,24 @@ for section in sections:
     pattern = r"\\begin{solution}(.*?)\\begin{equation\*}(.*?)\\end{equation\*}(.*?)\\end{solution}"
     matches = re.findall(pattern, section, re.DOTALL)
     latex_equation = matches[0][1].strip()
+    latex_equation = latex_equation.replace('y(t)=', '')
     solution_equation = parse_latex(latex_equation)
+    lhs = None
+    if isinstance(solution_equation, Equality):
+        lhs = solution_equation.lhs
 
     # Split && strip lines
     listOfStrings = latex_text.split('\n')
     listOfStrings = [s.strip() for s in listOfStrings if s.strip()]
 
+    # odozva02pr.tex style task (Differential equations)
+    if len(listOfStrings) == 6:
+        listOfStrings[2] = listOfStrings[2].replace("'", '′')
+        listOfStrings[2] = listOfStrings[2].replace('^','')
+        listOfStrings[2] = listOfStrings[2].replace('”', "′′")
+        listOfStrings[4] = listOfStrings[4].replace("'", '′')
+        listOfStrings[4] = listOfStrings[4].replace('^', '')
+        listOfStrings[4] = listOfStrings[4].replace('”', "′′")
     parsed_task['file_name'] = os.path.basename(path)
     parsed_task['section_title'] = listOfStrings[0]
 
@@ -58,10 +71,16 @@ for section in sections:
     # Assign whole task description (text + equation)
     if task_equation is None:
         parsed_task['task'] = listOfStrings[1]
+    elif len(listOfStrings) == 6:
+        parsed_task['task'] = listOfStrings[1] + ' ' + listOfStrings[2] + ' ' + listOfStrings[3] + ' ' + listOfStrings[4]
     else:
-        parsed_task['task'] = listOfStrings[1] + ' ' + str(task_equation.args[1])
+        parsed_task['task'] = listOfStrings[1] + ' ' + str(task_equation)
 
-    parsed_task['solution'] = str(solution_equation.args[1])
+    # Assign solution if its equation only left side
+    if lhs is not None:
+        parsed_task['solution'] = str(lhs)
+    else:
+        parsed_task['solution'] = str(solution_equation)
 
     parsed_tasks.append(parsed_task)
 
