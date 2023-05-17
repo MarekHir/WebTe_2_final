@@ -17,23 +17,29 @@ use App\Http\Controllers\ExercisesListController;
 |
 */
 
-Route::group(['middleware' => ['auth:sanctum']],
-    function () {
-        Route::get('user', function (Request $request) {
-            return $request->user();
-        });
-        Route::group(['prefix' => 'teacher'], function () {
-            Route::post('exercise-list', [ExercisesListController::class, 'store']);
-            Route::resource('students', StudentsController::class)->only(['index', 'show']);
-        });
-    }
-);
+$routes = function () {
+    Route::group(['middleware' => ['auth:sanctum']],
+        function () {
+            Route::get('user', function (Request $request) {
+                return $request->user();
+            });
+            Route::group(['prefix' => 'teacher'], function () {
+                Route::post('exercise-list', [ExercisesListController::class, 'store']);
+                Route::resource('students', StudentsController::class)->only(['index', 'show']);
+            });
+        }
+    );
 
-Route::group(['prefix' => 'auth'],
-    function () {
-        Route::post('login', [AuthController::class, 'login']);
-        Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-        Route::post('refresh', [AuthController::class, 'refresh']);
-        Route::post('registration', [AuthController::class, 'registration']);
-    }
-);
+    Route::group(['prefix' => 'auth'],
+        function () {
+            Route::post('login', [AuthController::class, 'login']);
+            Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+            Route::post('refresh', [AuthController::class, 'refresh']);
+            Route::post('registration', [AuthController::class, 'registration']);
+        }
+    );
+};
+
+Route::group(['prefix' => '{lang?}', 'where' => [ 'lang' => 'en|sk']], $routes);
+
+$routes();
