@@ -5,9 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class exercisesListsSection extends Model
+class ExercisesListsSection extends Model
 {
     use HasFactory;
+
+    public function exercisesList()
+    {
+        return $this->belongsTo(ExercisesList::class);
+    }
 
     protected $fillable = [
         'section_title',

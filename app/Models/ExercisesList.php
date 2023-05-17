@@ -9,9 +9,20 @@ class ExercisesList extends Model
 {
     use HasFactory;
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function ExercisesListsSection()
+    {
+        return $this->hasMany(ExercisesListsSection::class);
+    }
+
     protected $fillable = [
         'file_name',
         'base_path',
+        'user_id',
         'name',
         'images',
     ];

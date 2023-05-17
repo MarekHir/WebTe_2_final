@@ -5,19 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\ExercisesList;
 use App\Services\LatexParseService;
 use App\Services\SaveLatexService;
-use http\Env\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ExercisesListController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        if($request->user()->cannot('viewAll', ExercisesList::class))
+            return response()->json(['message' => 'Not allowed'], 403);
+
         return ExercisesList::all();
     }
 
     public function store(Request $request)
     {
         // TODO: trans messages with status in steps
+
+        if($request->user()->cannot('create', ExercisesList::class))
+            return response()->json(['message' => 'Not allowed'], 403);
+
         $validatedData = $request->validate([
             'file' => 'required',
             'name' => 'required|string',
@@ -27,7 +34,7 @@ class ExercisesListController extends Controller
         if (!array_key_exists('images', $validatedData))
             $validatedData['images'] = [];
 
-        $exercise_list = ExercisesList::create(['name' => $validatedData['name']]);
+        $exercise_list = ExercisesList::create(['name' => $validatedData['name'], 'user_id' => Auth::id()]);
 
         $save_service = app(SaveLatexService::class);
         $file_save_result = $save_service->run($exercise_list->id, $validatedData['file'], $validatedData['images']);

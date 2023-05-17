@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\StudentsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -23,6 +24,7 @@ Route::group(['middleware' => ['auth:sanctum']],
         });
         Route::group(['prefix' => 'teacher'], function () {
             Route::post('exercise-list', [ExercisesListController::class, 'store']);
+            Route::resource('students', StudentsController::class)->only(['index', 'show']);
         });
     }
 );
