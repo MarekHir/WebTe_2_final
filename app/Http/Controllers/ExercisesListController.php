@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Auth;
 
 class ExercisesListController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(ExercisesList::class, 'exercise_list');
+    }
+
+
     public function index(Request $request)
     {
         if($request->user()->cannot('viewAll', ExercisesList::class))

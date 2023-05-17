@@ -24,7 +24,7 @@ $routes = function () {
                 return $request->user();
             });
             Route::group(['prefix' => 'teacher'], function () {
-                Route::post('exercise-list', [ExercisesListController::class, 'store']);
+                Route::resource('exercise-list', ExercisesListController::class)->only(['store']);
                 Route::resource('students', StudentsController::class)->only(['index', 'show']);
             });
         }

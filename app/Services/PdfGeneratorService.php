@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services;
 
-use \TCPDF;
-use App\Models\Pdf;
 use Parsedown;
+use TCPDF;
 
-class PdfController extends Controller
+class PdfGeneratorService extends AbstractService
 {
-    public function generatePdf()
+
+    public function run(...$args)
     {
         $markdown = '# Heading 1' . PHP_EOL . 'Some **bold** and *italic* text.';
 
@@ -28,6 +28,5 @@ class PdfController extends Controller
         $pdf->writeHTML($html);
 
         $pdf->Output('example.pdf', 'I');
-
     }
 }

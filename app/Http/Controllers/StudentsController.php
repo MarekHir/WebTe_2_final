@@ -7,13 +7,12 @@ use Illuminate\Http\Request;
 
 class StudentsController extends Controller
 {
-    public function index(Request $request)
+    public function __construct()
     {
-        // TODO: Trans messages
-
-        if($request->user()->cannot('viewAll', User::class))
-            return response()->json(['message' => 'Not allowed'], 403);
-
+        $this->authorizeResource(User::class, 'student');
+    }
+    public function index()
+    {
         return User::where('role', 'student')->get();
     }
 
@@ -27,27 +26,22 @@ class StudentsController extends Controller
         //
     }
 
-    public function show(Request $request, string $id)
+    public function show(User $student)
     {
-        // TODO: trans message
-
-        if($request->user()->cannot('view', User::class))
-            return response()->json(['message' => 'Not allowed'], 403);
-
-        return User::where('role', 'student')->where('id', $id)->first();
+        return $student;
     }
 
-    public function edit(string $id)
+    public function edit(User $student)
     {
         //
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $student)
     {
         //
     }
 
-    public function destroy(string $id)
+    public function destroy(User $student)
     {
         //
     }

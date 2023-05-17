@@ -6,23 +6,14 @@ use App\Models\ExercisesList;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class ExercisesListPolicy
+class ExercisesListPolicy extends AbstractPolicy
 {
-    public function before(User $user): bool|null
-    {
-        if ($user->isAdmin()) {
-            return true;
-        }
-
-        return null;
-    }
-
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): Response
+    public function viewAny(User $user): bool
     {
-        return $user->isTeacher() ? Response::allow() : Response::deny();
+        return $user->isTeacher() ? true : false;
     }
 
     /**
@@ -30,15 +21,15 @@ class ExercisesListPolicy
      */
     public function view(User $user, ExercisesList $exercisesList): bool
     {
-        //
+        return false;
     }
 
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): Response
+    public function create(User $user): bool
     {
-        return $user->isTeacher() ? Response::allow() : Response::deny('avwefwf');
+        return $user->isTeacher() ? true : false;
     }
 
     /**
@@ -46,7 +37,7 @@ class ExercisesListPolicy
      */
     public function update(User $user, ExercisesList $exercisesList): bool
     {
-        //
+        return false;
     }
 
     /**
@@ -54,7 +45,7 @@ class ExercisesListPolicy
      */
     public function delete(User $user, ExercisesList $exercisesList): bool
     {
-        //
+        return false;
     }
 
     /**
@@ -62,7 +53,7 @@ class ExercisesListPolicy
      */
     public function restore(User $user, ExercisesList $exercisesList): bool
     {
-        //
+        return false;
     }
 
     /**
@@ -70,6 +61,6 @@ class ExercisesListPolicy
      */
     public function forceDelete(User $user, ExercisesList $exercisesList): bool
     {
-        //
+        return false;
     }
 }
