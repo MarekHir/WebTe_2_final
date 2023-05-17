@@ -7,6 +7,7 @@ use App\Services\LatexParseService;
 use App\Services\SaveLatexService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class ExercisesListController extends Controller
 {
@@ -18,8 +19,8 @@ class ExercisesListController extends Controller
 
     public function index(Request $request)
     {
-        if($request->user()->cannot('viewAll', ExercisesList::class))
-            return response()->json(['message' => 'Not allowed'], 403);
+        //if($request->user()->cannot('viewAll', ExercisesList::class))
+        //    return response()->json(['message' => 'Not allowed'], 403);
 
         return ExercisesList::all();
     }
@@ -65,18 +66,26 @@ class ExercisesListController extends Controller
     }
 
 
-    public function show(ExercisesList $exercise)
+    public function show(Request $request ,ExercisesList $exercise)
     {
-        //
+        if($request->user()->cannot('view', User::class))
+            return response()->json(['message' => 'Not allowed'], 403);
+
+        return $exercise;
     }
 
     public function update(Request $request, ExercisesList $exercise)
     {
-        //
+        if($request->user()->cannot('update', User::class))
+            return response()->json(['message' => 'Not allowed'], 403);
+        $exercise->update($request->all());
+        return $exercise;
     }
 
-    public function destroy(ExercisesList $exercise)
+    public function destroy(Request $request, ExercisesList $exercise)
     {
-        //
+        if($request->user()->cannot('delete', User::class))
+            return response()->json(['message' => 'Not allowed'], 403);
+        $exercise->delete();
     }
 }

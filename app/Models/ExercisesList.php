@@ -19,6 +19,11 @@ class ExercisesList extends Model
         return $this->hasMany(ExercisesListsSection::class);
     }
 
+    public function ExercisesSetSection()
+    {
+        return $this->hasMany(ExercisesSet::class);
+    }
+
     protected $fillable = [
         'file_name',
         'base_path',
