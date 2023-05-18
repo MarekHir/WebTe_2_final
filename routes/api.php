@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InstructionsController;
 use App\Http\Controllers\StudentsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,7 @@ $routes = function () {
             Route::group(['prefix' => 'teacher'], function () {
                 Route::resource('exercise-list', ExercisesListController::class)->only(['store']);
                 Route::resource('students', StudentsController::class)->only(['index', 'show']);
+                Route::resource('instructions', InstructionsController::class)->except(['create', 'edit']);
             });
         }
     );

@@ -9,22 +9,15 @@ class InstructionsController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource(Instructions::class, 'instructions');
+        $this->authorizeResource(Instructions::class, 'instruction');
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
+        return response()->json(Instructions::forRole($request->user()->role)->withUsers()->get());
     }
 
     /**
@@ -32,38 +25,54 @@ class InstructionsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated_data = $request->validate([
+            'name' => 'required|string|max:64',
+            'description' => 'required|string|max:255',
+            'for_user_type' => 'required|string|in:student,teacher,all',
+            'markdown' => 'required|string',
+        ]);
+
+        $instruction = new Instructions($validated_data);
+        $instruction->save();
+
+        return response()->json($instruction, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Instructions $instructions)
+    public function show(Instructions $instruction)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Instructions $instructions)
-    {
-        //
+        return response()->json($instruction);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Instructions $instructions)
+    public function update(Request $request, Instructions $instruction)
     {
-        //
+        $validated_data = $request->validate([
+            'name' => 'string|max:64',
+            'description' => 'string|max:255',
+            'for_user_type' => 'string|in:student,teacher,all',
+            'markdown' => 'string',
+        ]);
+
+        $instruction->update($validated_data);
+
+        return response()->json($instruction);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Instructions $instructions)
+    public function destroy(Instructions $instruction)
     {
-        //
+        $instruction->delete();
+
+        // TODO: trans message
+        return response()->json([
+            'message' => 'Instruction deleted successfully',
+        ]);
     }
 }
