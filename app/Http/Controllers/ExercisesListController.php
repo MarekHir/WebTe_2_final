@@ -19,19 +19,11 @@ class ExercisesListController extends Controller
 
     public function index(Request $request)
     {
-        if($request->user()->cannot('viewAll', ExercisesList::class))
-            return response()->json(['message' => trans('validation.notAllowed')], 403);
-
         return ExercisesList::all();
     }
 
     public function store(Request $request)
     {
-
-
-        if($request->user()->cannot('create', ExercisesList::class))
-            return response()->json(['message' => trans('validation.notAllowed')], 403);
-
         $validatedData = $request->validate([
             'file' => 'required',
             'name' => 'required|string',
@@ -66,26 +58,19 @@ class ExercisesListController extends Controller
     }
 
 
-    public function show(Request $request ,ExercisesList $exercise)
+    public function show(ExercisesList $exercise)
     {
-        if($request->user()->cannot('view', User::class))
-            return response()->json(['message' => 'Not allowed'], 403);
-
         return $exercise;
     }
 
     public function update(Request $request, ExercisesList $exercise)
     {
-        if($request->user()->cannot('update', User::class))
-            return response()->json(['message' => 'Not allowed'], 403);
         $exercise->update($request->all());
         return $exercise;
     }
 
     public function destroy(Request $request, ExercisesList $exercise)
     {
-        if($request->user()->cannot('delete', User::class))
-            return response()->json(['message' => 'Not allowed'], 403);
         $exercise->delete();
     }
 }

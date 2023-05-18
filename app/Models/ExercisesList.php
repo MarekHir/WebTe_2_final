@@ -19,7 +19,7 @@ class ExercisesList extends Model
         return $this->hasMany(ExercisesListsSection::class);
     }
 
-    public function ExercisesSetSection()
+    public function ExercisesSets()
     {
         return $this->hasMany(ExercisesSet::class);
     }
