@@ -29,12 +29,9 @@ class ExercisesList extends UserStampModel
     ];
 
     protected $hidden = [
-        'id',
         'base_path',
         'file_name',
         'images',
-        'created_at',
-        'updated_at',
     ];
 
     protected $nullable = [

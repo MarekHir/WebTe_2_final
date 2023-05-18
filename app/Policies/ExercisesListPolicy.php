@@ -20,7 +20,7 @@ class ExercisesListPolicy extends AbstractPolicy
      */
     public function view(User $user, ExercisesList $exercisesList): bool
     {
-        return ($user->isTeacher() || $user->isStudent() && $exercisesList->is_active) ? true : false;
+        return $user->isTeacher() || $user->isStudent() && $exercisesList->is_active;
     }
 
     /**
