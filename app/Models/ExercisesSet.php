@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ExercisesSet extends Model
+class ExercisesSet extends UserStampModel
 {
     use HasFactory;
 
@@ -14,13 +14,13 @@ class ExercisesSet extends Model
         return $this->belongsTo(ExercisesList::class);
     }
 
-    protected $hidden = [
-        'id',
+    protected $fillable = [
+        'points',
+        'deadline',
         'exercises_lists_id'
     ];
 
-    protected $fillable = [
-        'points',
-        'exercises_lists_id'
+    protected $casts = [
+        'deadline' => 'datetime'
     ];
 }

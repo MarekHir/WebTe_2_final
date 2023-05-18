@@ -19,6 +19,18 @@ class ExercisesListController extends Controller
 
     public function index(Request $request)
     {
+        $validated_params = $request->validate([
+            'param' => 'nullable|string',
+            'search_by' => 'nullable|string|in:name'
+        ]);
+
+        if(array_key_exists('param', $validated_params) && array_key_exists('search_by', $validated_params) ){
+            $result = ExercisesList::where($validated_params['search_by'], 'like', '%'.$validated_params['param'].'%')->get();
+            return response()->json(collect($result)->map(function ($item) {
+                return ['title' => $item['name'], 'value' => $item['id']];
+            })->all());
+        }
+
         return ExercisesList::all();
     }
 
@@ -54,7 +66,7 @@ class ExercisesListController extends Controller
         return response()->json([
             'exercise_list' => $exercise_list,
             'file_save_result' => $file_save_result
-        ]);
+        ], 201);
     }
 
 
@@ -65,11 +77,11 @@ class ExercisesListController extends Controller
 
     public function update(Request $request, ExercisesList $exercise)
     {
-        $exercise->update($request->all());
+        $exercise->update($request->all()); // TODO: @halgi validated data where ?
         return $exercise;
     }
 
-    public function destroy(Request $request, ExercisesList $exercise)
+    public function destroy(ExercisesList $exercise)
     {
         $exercise->delete();
     }

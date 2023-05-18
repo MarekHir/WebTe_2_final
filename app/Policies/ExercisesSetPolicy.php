@@ -6,14 +6,14 @@ use App\Models\ExercisesSet;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class ExercisesSetPolicy
+class ExercisesSetPolicy extends AbstractPolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->isTeacher();
     }
 
     /**
@@ -21,7 +21,7 @@ class ExercisesSetPolicy
      */
     public function view(User $user, ExercisesSet $exercisesSet): bool
     {
-        //
+        return $user->isTeacher(); //TODO: add logic for students
     }
 
     /**
@@ -29,7 +29,7 @@ class ExercisesSetPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->isTeacher();
     }
 
     /**
@@ -37,7 +37,7 @@ class ExercisesSetPolicy
      */
     public function update(User $user, ExercisesSet $exercisesSet): bool
     {
-        //
+        return $this->updateDeleteRestoreForceDelete($user, $exercisesSet);
     }
 
     /**
@@ -45,7 +45,7 @@ class ExercisesSetPolicy
      */
     public function delete(User $user, ExercisesSet $exercisesSet): bool
     {
-        //
+        return $this->updateDeleteRestoreForceDelete($user, $exercisesSet);
     }
 
     /**
@@ -53,7 +53,7 @@ class ExercisesSetPolicy
      */
     public function restore(User $user, ExercisesSet $exercisesSet): bool
     {
-        //
+        return $this->updateDeleteRestoreForceDelete($user, $exercisesSet);
     }
 
     /**
@@ -61,6 +61,14 @@ class ExercisesSetPolicy
      */
     public function forceDelete(User $user, ExercisesSet $exercisesSet): bool
     {
-        //
+        return $this->updateDeleteRestoreForceDelete($user, $exercisesSet);
+    }
+
+    private function updateDeleteRestoreForceDelete(User $user, ExercisesSet $exercisesSet): bool
+    {
+        if($user->isTeacher() && $user->id === $exercisesSet->created_by)
+            return true;
+
+        return false;
     }
 }
