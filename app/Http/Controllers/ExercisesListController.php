@@ -13,7 +13,7 @@ class ExercisesListController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource(ExercisesList::class, 'exercise_list');
+        $this->authorizeResource(ExercisesList::class, 'exercises_list');
     }
 
 
@@ -39,13 +39,18 @@ class ExercisesListController extends Controller
         $validatedData = $request->validate([
             'file' => 'required',
             'name' => 'required|string',
+            'description' => 'required|text',
             'images' => 'nullable|array',
+            'points' => 'required|integer',
+            'initiation' => 'nullable|date',
+            'deadline' => 'nullable|date',
+            'is_active' => 'nullable|boolean',
         ]);
 
         if (!array_key_exists('images', $validatedData))
             $validatedData['images'] = [];
 
-        $exercise_list = ExercisesList::create(['name' => $validatedData['name'], 'user_id' => Auth::id()]);
+        $exercise_list = ExercisesList::create($validatedData);
 
         $save_service = app(SaveLatexService::class);
         $file_save_result = $save_service->run($exercise_list->id, $validatedData['file'], $validatedData['images']);
@@ -77,12 +82,24 @@ class ExercisesListController extends Controller
 
     public function update(Request $request, ExercisesList $exercise)
     {
-        $exercise->update($request->all()); // TODO: @halgi validated data where ?
+        $validated_data = $request->validate([
+            'name' => 'required|string',
+            'description' => 'required|text',
+            'points' => 'required|integer',
+            'initiation' => 'nullable|date',
+            'deadline' => 'nullable|date',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $exercise->update($validated_data);
         return $exercise;
     }
 
     public function destroy(ExercisesList $exercise)
     {
         $exercise->delete();
+
+        // TODO: trans
+        return response()->json(['message' => 'Deleted exercise list'], 204);
     }
 }

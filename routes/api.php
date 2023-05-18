@@ -25,9 +25,8 @@ $routes = function () {
             Route::get('user', function (Request $request) {
                 return $request->user();
             });
-            Route::resource('exercises-set', ExercisesSetsController::class)->except(['create', 'edit']);
             Route::resource('instructions', InstructionsController::class)->except(['create', 'edit']);
-            Route::resource('exercise-list', ExercisesListController::class)->except(['create', 'edit']);
+            Route::resource('exercises-list', ExercisesListController::class)->except(['create', 'edit']);
             Route::resource('students', StudentsController::class)->only(['index', 'show']);
         }
     );
