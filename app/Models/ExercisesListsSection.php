@@ -14,6 +14,11 @@ class ExercisesListsSection extends Model
         return $this->belongsTo(ExercisesList::class);
     }
 
+    public function exercises()
+    {
+        return $this->hasMany(Exercises::class);
+    }
+
     protected $fillable = [
         'section_title',
         'task',
