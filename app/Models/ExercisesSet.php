@@ -9,9 +9,9 @@ class ExercisesSet extends Model
 {
     use HasFactory;
 
-    public function exerciseList()
+    public function exercisesLists()
     {
-        return $this->belongsTo(ExerciseList::class);
+        return $this->belongsTo(ExercisesList::class);
     }
 
     protected $hidden = [
