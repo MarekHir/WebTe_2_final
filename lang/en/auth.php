@@ -27,4 +27,5 @@ return [
     'logout' => [
         'success' => 'Successfully logged out!',
     ],
+    'refresh' => 'Refreshed',
 ];

@@ -19,18 +19,18 @@ class ExercisesListController extends Controller
 
     public function index(Request $request)
     {
-        //if($request->user()->cannot('viewAll', ExercisesList::class))
-        //    return response()->json(['message' => 'Not allowed'], 403);
+        if($request->user()->cannot('viewAll', ExercisesList::class))
+            return response()->json(['message' => trans('validation.notAllowed')], 403);
 
         return ExercisesList::all();
     }
 
     public function store(Request $request)
     {
-        // TODO: trans messages with status in steps
+
 
         if($request->user()->cannot('create', ExercisesList::class))
-            return response()->json(['message' => 'Not allowed'], 403);
+            return response()->json(['message' => trans('validation.notAllowed')], 403);
 
         $validatedData = $request->validate([
             'file' => 'required',
@@ -57,7 +57,7 @@ class ExercisesListController extends Controller
             $exercise_list->id);
 
         if (!$parse_result)
-            return response()->json(['message' => 'Error occured while parsing'], 400);
+            return response()->json(['message' => trans('validation.errorParsing')], 400);
 
         return response()->json([
             'exercise_list' => $exercise_list,
