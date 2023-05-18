@@ -22,9 +22,9 @@ class Authorizate extends Authorize
             return $next($request);
         }
 
-        // TODO: Add trans key for message
+
         return response()->json([
-            'message' => 'You are not authorized to access this resource',
+            'message' => trans('validation.notAutorized'),
         ], Response::HTTP_FORBIDDEN);
     }
 }

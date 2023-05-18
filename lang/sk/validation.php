@@ -150,7 +150,10 @@ return [
     'url' => 'Pole :attribute musí byť platnou URL adresou.',
     'ulid' => 'Pole :attribute musí byť platný ULID.',
     'uuid' => 'Pole :attribute musí byť platný ULID.',
-
+    'deleted' => 'Návod úspešne odstránený',
+    'errorParsing' => 'Pri analyzovaní došlo k chybe',
+    'notAllowed' => 'Not allowed',
+    'notAutorized' => 'Nemáte oprávnenie na prístup k tomuto zdroju',
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines

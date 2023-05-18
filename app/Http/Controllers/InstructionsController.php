@@ -70,9 +70,7 @@ class InstructionsController extends Controller
     {
         $instruction->delete();
 
-        // TODO: trans message
-        return response()->json([
-            'message' => 'Instruction deleted successfully',
-        ]);
+
+        return response()->json(['message' => trans('validation.deleted')]);
     }
 }

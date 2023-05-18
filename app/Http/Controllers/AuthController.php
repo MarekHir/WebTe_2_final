@@ -71,7 +71,6 @@ class AuthController extends Controller
     {
         $request->session()->regenerate();
 
-        // TODO: Add trans key for session refreshed
-        return response()->json(['info' => 'refreshed']);
+        return response()->json(['info' => trans('auth.refresh')]);
     }
 }
