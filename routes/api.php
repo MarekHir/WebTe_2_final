@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExercisesSetsController;
 use App\Http\Controllers\InstructionsController;
 use App\Http\Controllers\StudentsController;
 use Illuminate\Http\Request;
@@ -24,11 +25,10 @@ $routes = function () {
             Route::get('user', function (Request $request) {
                 return $request->user();
             });
-            Route::group(['prefix' => 'teacher'], function () {
-                Route::resource('exercise-list', ExercisesListController::class)->only(['store']);
-                Route::resource('students', StudentsController::class)->only(['index', 'show']);
-                Route::resource('instructions', InstructionsController::class)->except(['create', 'edit']);
-            });
+            Route::resource('exercises-set', ExercisesSetsController::class)->except(['create', 'edit']);
+            Route::resource('instructions', InstructionsController::class)->except(['create', 'edit']);
+            Route::resource('exercise-list', ExercisesListController::class)->except(['create', 'edit']);
+            Route::resource('students', StudentsController::class)->only(['index', 'show']);
         }
     );
 
