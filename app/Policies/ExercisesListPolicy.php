@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\ExercisesList;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ExercisesListPolicy extends AbstractPolicy
 {
@@ -13,7 +12,7 @@ class ExercisesListPolicy extends AbstractPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isTeacher() ? true : false;
+        return true;
     }
 
     /**
@@ -21,7 +20,7 @@ class ExercisesListPolicy extends AbstractPolicy
      */
     public function view(User $user, ExercisesList $exercisesList): bool
     {
-        return $user->isTeacher() ? true : false;
+        return $user->isTeacher() || $user->isStudent() && $exercisesList->is_active;
     }
 
     /**
@@ -37,7 +36,7 @@ class ExercisesListPolicy extends AbstractPolicy
      */
     public function update(User $user, ExercisesList $exercisesList): bool
     {
-        return $user->isTeacher() ? true : false;
+        return $this->updateDeleteRestoreForceDelete($user, $exercisesList);
     }
 
     /**
@@ -45,7 +44,7 @@ class ExercisesListPolicy extends AbstractPolicy
      */
     public function delete(User $user, ExercisesList $exercisesList): bool
     {
-        return $user->isTeacher() ? true : false;
+        return $this->updateDeleteRestoreForceDelete($user, $exercisesList);
     }
 
     /**
@@ -53,7 +52,7 @@ class ExercisesListPolicy extends AbstractPolicy
      */
     public function restore(User $user, ExercisesList $exercisesList): bool
     {
-        return $user->isTeacher() ? true : false;
+        return $this->updateDeleteRestoreForceDelete($user, $exercisesList);
     }
 
     /**
@@ -61,6 +60,14 @@ class ExercisesListPolicy extends AbstractPolicy
      */
     public function forceDelete(User $user, ExercisesList $exercisesList): bool
     {
-        return $user->isTeacher() ? true : false;
+        return $this->updateDeleteRestoreForceDelete($user, $exercisesList);
+    }
+
+    private function updateDeleteRestoreForceDelete(User $user, ExercisesList $exercisesList): bool
+    {
+        if($user->isTeacher() && $user->id === $exercisesList->created_by)
+            return true;
+
+        return false;
     }
 }

@@ -13,7 +13,7 @@ class ExercisesListController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource(ExercisesList::class, 'exercise_list');
+        $this->authorizeResource(ExercisesList::class, 'exercises_list');
     }
 
 
@@ -31,21 +31,36 @@ class ExercisesListController extends Controller
             })->all());
         }
 
-        return ExercisesList::all();
+        return ExercisesList::with(['created_by'])->get();
     }
 
     public function store(Request $request)
     {
+        // TODO: validations
         $validatedData = $request->validate([
             'file' => 'required',
             'name' => 'required|string',
+            'description' => 'required|string',
             'images' => 'nullable|array',
+            'points' => 'required|integer',
+            'initiation' => 'nullable',
+            'deadline' => 'nullable',
+            'is_active' => 'nullable',
         ]);
 
         if (!array_key_exists('images', $validatedData))
             $validatedData['images'] = [];
 
-        $exercise_list = ExercisesList::create(['name' => $validatedData['name'], 'user_id' => Auth::id()]);
+        $create_data = collect($validatedData)->only([
+            'name',
+            'description',
+            'points',
+            'initiation',
+            'deadline',
+            'is_active',
+        ])->toArray();
+
+        $exercise_list = ExercisesList::create($create_data);
 
         $save_service = app(SaveLatexService::class);
         $file_save_result = $save_service->run($exercise_list->id, $validatedData['file'], $validatedData['images']);
@@ -63,26 +78,35 @@ class ExercisesListController extends Controller
         if (!$parse_result)
             return response()->json(['message' => trans('validation.errorParsing')], 400);
 
-        return response()->json([
-            'exercise_list' => $exercise_list,
-            'file_save_result' => $file_save_result
-        ], 201);
+        return response()->json($exercise_list, 201);
     }
 
 
-    public function show(ExercisesList $exercise)
+    public function show(ExercisesList $exercises_list)
     {
-        return $exercise;
+        return ExercisesList::where('id', $exercises_list->id)->with(['created_by'])->first();
     }
 
-    public function update(Request $request, ExercisesList $exercise)
+    public function update(Request $request, ExercisesList $exercises_list)
     {
-        $exercise->update($request->all()); // TODO: @halgi validated data where ?
-        return $exercise;
+        $validated_data = $request->validate([
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'points' => 'required|integer',
+            'initiation' => 'nullable|date',
+            'deadline' => 'nullable|date',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $exercises_list->update($validated_data);
+        return $exercises_list;
     }
 
-    public function destroy(ExercisesList $exercise)
+    public function destroy(ExercisesList $exercises_list)
     {
-        $exercise->delete();
+        $exercises_list->delete();
+
+        // TODO: trans
+        return response()->json(['message' => 'Deleted exercise list']);
     }
 }
