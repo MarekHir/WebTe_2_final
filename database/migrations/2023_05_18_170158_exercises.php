@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('exercises', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->boolean('solved');
             $table->integer('points');
             $table->unsignedBigInteger('created_by')->nullable();
@@ -28,6 +27,7 @@ return new class extends Migration
                 ->on('users')
                 ->nullOnDelete()
                 ->cascadeOnUpdate();
+            $table->timestamps();
         });
     }
 
@@ -36,9 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('exercises', function (Blueprint $table) {
-            $table->dropColumn('created_by');
-            $table->dropColumn('updated_by');
-        });
+        Schema::dropIfExists('exercises');
     }
 };
