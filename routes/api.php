@@ -19,7 +19,8 @@ use App\Http\Controllers\ExercisesListController;
 |
 */
 
-$routes = function () {
+
+Route::localized(function () {
     Route::group(['middleware' => ['auth:sanctum']],
         function () {
             Route::get('user', function (Request $request) {
@@ -39,8 +40,4 @@ $routes = function () {
             Route::post('registration', [AuthController::class, 'registration']);
         }
     );
-};
-
-Route::group(['prefix' => '{lang?}', 'where' => [ 'lang' => 'en|sk']], $routes);
-
-$routes();
+});
