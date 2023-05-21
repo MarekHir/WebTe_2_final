@@ -3,45 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Models\Exercises;
+use App\Services\GenerateExercisesService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class ExercisesController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Exercises::class, 'exercise');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $validated_params = $request->validate([
-            'param' => 'nullable|string',
-            'search_by' => 'nullable|string|in:name',
-            'order' => 'nullable|string'
-        ]);
-
-        $query = Exercises::query();
-
-        if (array_key_exists('param', $validated_params) && array_key_exists('search_by', $validated_params)) {
-            $query->where($validated_params['search_by'], 'like', '%' . $validated_params['param'] . '%');
-        }
-
-        if (array_key_exists('order', $validated_params)) {
-            $order = $validated_params['order'];
-            $descending = false;
-    
-            if (substr($order, 0, 1) === '-') {
-                $descending = true;
-                $order = substr($order, 1);
-            }
-    
-            $query->orderBy($order, $descending ? 'desc' : 'asc');
-        }
-    
-        $result = $query->get();
-    
-        return response()->json($result->map(function ($item) {
-            return ['solved' => $item['solved'], 'points' => $item['points'], 'id' => $item['id']];
-        })->all());
+        return QueryBuilder::for(Exercises::class, $request)
+            ->allowedFilters(['points', AllowedFilter::exact('solved'), AllowedFilter::exact('created_by'), 'created_at', 'exercises_lists_sections_id'])
+            ->allowedSorts(['id', 'points', 'solved', 'created_by', 'created_at', 'exercises_lists_sections_id'])
+            ->allowedFields(['points', 'solved', 'created_by', 'created_at', 'exercises_lists_sections_id'])
+            ->allowedIncludes(['exercisesListsSections'])
+            ->with(['exercisesListsSections', 'exercisesListsSections.exercisesLists'])
+            ->where(fn($query) => Auth::user()->isStudent() ? $query->where('created_by', Auth::id()) : $query)
+            ->get();
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -49,44 +39,50 @@ class ExercisesController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'created_by' => 'nullable|exists:users,id',
-            'updated_by' => 'nullable|exists:users,id',
-            'points' => 'required|integer|min:0',
-            'solved' => 'required|boolean',
+            'exercises_lists_sections_ids' => 'required|array',
+            'exercises_lists_sections_ids.*' => 'integer',
         ]);
 
-        $exercise = Exercises::create($validatedData);
+        $service = new GenerateExercisesService();
+        $result = $service->run($validatedData['exercises_lists_sections_ids']);
 
-        return $exercise;
+        if(!$result) {
+            // TODO: translate
+            return response()->json(['message' => 'Failed to generate exercises'],
+                ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        // TODO: translate
+        return response()->json(['message' => 'Successfully generated exercises'], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Exercises $exercises)
+    public function show(Exercises $exercise)
     {
-        return $exercises;
+        return Exercises::with(['exercisesListsSections', 'exercisesListsSections.exercisesLists'])->find($exercise->id);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Exercises $exercises)
+    public function update(Request $request, Exercises $exercise)
     {
         $validatedData = $request->validate([
-            'created_by' => 'nullable|exists:users,id',
-            'updated_by' => 'nullable|exists:users,id',
+            'points' => 'required|integer|min:0',
+            'solved' => 'required|boolean',
         ]);
-    
-        $exercises->update($validatedData);
-        return $exercises;
+
+        $exercise->update($validatedData);
+        return $exercise;
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Exercises $exercises)
+    public function destroy(Exercises $exercise)
     {
-        $exercises->delete();
+        $exercise->delete();
     }
 }

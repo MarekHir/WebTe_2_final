@@ -13,7 +13,7 @@ class ExercisesPolicy extends AbstractPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isTeacher() ? true : false;
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class ExercisesPolicy extends AbstractPolicy
      */
     public function view(User $user, Exercises $exercises): bool
     {
-        return $user->isStudent() ? true : false;
+        return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class ExercisesPolicy extends AbstractPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isStudent() ? true : false;
+        return true;
     }
 
     /**
@@ -37,7 +37,7 @@ class ExercisesPolicy extends AbstractPolicy
      */
     public function update(User $user, Exercises $exercises): bool
     {
-        return $user->isStudent() ? true : false;
+        return true;
     }
 
     /**
@@ -45,7 +45,7 @@ class ExercisesPolicy extends AbstractPolicy
      */
     public function delete(User $user, Exercises $exercises): bool
     {
-        return $user->isStudent() ? true : false;
+        return $user->isTeacher();
     }
 
     /**
@@ -53,7 +53,7 @@ class ExercisesPolicy extends AbstractPolicy
      */
     public function restore(User $user, Exercises $exercises): bool
     {
-        return $user->isTeacher() ? true : false;
+        return $user->isTeacher();
     }
 
     /**
@@ -61,6 +61,6 @@ class ExercisesPolicy extends AbstractPolicy
      */
     public function forceDelete(User $user, Exercises $exercises): bool
     {
-        return $user->isStudent() ? true : false;
+        return $user->isTeacher();
     }
 }

@@ -3,26 +3,34 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class Exercises extends UserStampModel
 {
     use HasFactory;
 
-    public function exercisesListsSection()
+    public static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->solved = $model->solved ?? false;
+        });
+    }
+
+    public function exercisesListsSections()
     {
         return $this->belongsTo(ExercisesListsSection::class);
     }
 
     protected $fillable = [
-        'created_by',
-        'updated_by'.
         'points',
-        'solved'
+        'solved',
+        'exercises_lists_sections_id',
+        'solution'
     ];
 
     protected $nullable = [
-        'created_by',
-        'updated_by'
+        'points',
+        'solution'
     ];
 }

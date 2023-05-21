@@ -21,11 +21,18 @@ class ExercisesListController extends Controller
     {
         $validated_params = $request->validate([
             'param' => 'nullable|string',
-            'search_by' => 'nullable|string|in:name'
+            'search_by' => 'nullable|string|in:name',
+            'only_active' => 'nullable|string|in:true,false'
         ]);
 
-        if(array_key_exists('param', $validated_params) && array_key_exists('search_by', $validated_params) ){
-            $result = ExercisesList::where($validated_params['search_by'], 'like', '%'.$validated_params['param'].'%')->get();
+        if (Auth::user()->isStudent() ||
+                array_key_exists('only_active', $validated_params) &&
+                $validated_params['only_active'] === 'true') {
+            return ExercisesList::activeWithValidDates()->with('created_by')->get();
+        }
+
+        if (array_key_exists('param', $validated_params) && array_key_exists('search_by', $validated_params)) {
+            $result = ExercisesList::where($validated_params['search_by'], 'like', '%' . $validated_params['param'] . '%')->get();
             return response()->json(collect($result)->map(function ($item) {
                 return ['title' => $item['name'], 'value' => $item['id']];
             })->all());

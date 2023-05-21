@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExercisesController;
 use App\Http\Controllers\ExercisesSetsController;
 use App\Http\Controllers\InstructionsController;
 use App\Http\Controllers\StudentsController;
@@ -26,9 +27,12 @@ Route::localized(function () {
             Route::get('user', function (Request $request) {
                 return $request->user();
             });
+
+            // TODO: allow only implemented methods
             Route::resource('instructions', InstructionsController::class)->except(['create', 'edit']);
             Route::resource('exercises-list', ExercisesListController::class)->except(['create', 'edit']);
             Route::resource('students', StudentsController::class)->only(['index', 'show']);
+            Route::resource('exercises', ExercisesController::class)->except(['create', 'edit']);
         }
     );
 

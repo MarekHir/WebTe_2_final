@@ -9,7 +9,7 @@ class ExercisesListsSection extends Model
 {
     use HasFactory;
 
-    public function exercisesList()
+    public function exercisesLists()
     {
         return $this->belongsTo(ExercisesList::class);
     }
@@ -29,8 +29,6 @@ class ExercisesListsSection extends Model
 
     protected $hidden = [
         'id',
-        'section_title',
-        'task',
         'solution',
         'exercises_lists_id',
         'created_at',
