@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Exercises;
+use App\Services\EquationComparatorService;
 use App\Services\GenerateExercisesService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -75,6 +76,18 @@ class ExercisesController extends Controller
         ]);
 
         $exercise->update($validatedData);
+
+//        From old LatexController
+//        $validateData = $request->validate([
+//            'id' => 'required',
+//            'inputEquation' => 'required'
+//        ]);
+//        //dd($validateData);
+//        $compareService = app(EquationComparatorService::class);
+//        $exercise = Exercise::where('id', $validateData['id'])->first();
+//        $solution = $exercise->solution;
+//        //dd($solution);
+//        $jsonData = $compareService->run($solution, $validateData['inputEquation']);
         return $exercise;
     }
 
