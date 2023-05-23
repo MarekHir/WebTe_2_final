@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class StudentsController extends Controller
 {
@@ -11,9 +14,16 @@ class StudentsController extends Controller
     {
         $this->authorizeResource(User::class, 'student');
     }
-    public function index()
+
+    public function index(Request $request)
     {
-        return User::where('role', 'student')->get();
+        return QueryBuilder::for(User::class, $request)
+            ->select(['users.*',
+                DB::raw('(SELECT COUNT(*) FROM exercises WHERE users.id = exercises.created_by) AS num_of_exercises'),
+                DB::raw('(SELECT COALESCE(SUM(points), 0) FROM exercises WHERE users.id = exercises.created_by) AS total_points')])
+            ->allowedSorts(['id', 'first_name', 'surname', 'num_of_exercises', 'total_points'])
+            ->where('role', 'student')
+            ->get();
     }
 
     public function show(User $student)
