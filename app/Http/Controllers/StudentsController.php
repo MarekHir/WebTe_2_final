@@ -16,33 +16,8 @@ class StudentsController extends Controller
         return User::where('role', 'student')->get();
     }
 
-    public function create()
-    {
-        //
-    }
-
-    public function store(Request $request)
-    {
-        //
-    }
-
     public function show(User $student)
     {
         return $student;
-    }
-
-    public function edit(User $student)
-    {
-        //
-    }
-
-    public function update(Request $request, User $student)
-    {
-        //
-    }
-
-    public function destroy(User $student)
-    {
-        //
     }
 }
