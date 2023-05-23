@@ -26,10 +26,12 @@ class SaveLatexService extends AbstractService
         $base_images_path = $base_path . '/images';
         $prepend_path = 'storage/app/';
         $images_paths = [];
-
         if (Storage::directoryMissing('exercises'))
             Storage::makeDirectory('exercises');
+        if (Storage::directoryMissing('public/exercises'))
+            Storage::makeDirectory('public/exercises');
         Storage::makeDirectory($base_path);
+        Storage::makeDirectory('public/' . $base_path);
         if(!empty($images))
             Storage::makeDirectory($base_images_path);
 
@@ -37,6 +39,7 @@ class SaveLatexService extends AbstractService
 
         foreach ($images as $image) {
             $images_paths[] = $prepend_path . $image->storeAs($base_images_path, $image->getClientOriginalName());
+            $image->storeAs('public/' . $base_path, $image->getClientOriginalName());
         }
 
 

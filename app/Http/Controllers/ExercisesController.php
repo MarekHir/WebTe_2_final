@@ -7,6 +7,7 @@ use App\Services\EquationComparatorService;
 use App\Services\GenerateExercisesService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -71,23 +72,22 @@ class ExercisesController extends Controller
     public function update(Request $request, Exercises $exercise)
     {
         $validatedData = $request->validate([
-            'points' => 'required|integer|min:0',
-            'solved' => 'required|boolean',
+            'solution' => 'required|string',
+            'description' => 'nullable|string',
         ]);
 
-        $exercise->update($validatedData);
+        $update_data = $validatedData;
 
-//        From old LatexController
-//        $validateData = $request->validate([
-//            'id' => 'required',
-//            'inputEquation' => 'required'
-//        ]);
-//        //dd($validateData);
-//        $compareService = app(EquationComparatorService::class);
-//        $exercise = Exercise::where('id', $validateData['id'])->first();
-//        $solution = $exercise->solution;
-//        //dd($solution);
-//        $jsonData = $compareService->run($solution, $validateData['inputEquation']);
+        $compareService = app(EquationComparatorService::class);
+        $jsonData = $compareService->run($exercise->exercisesListsSections->solution, $validatedData['solution']);
+
+        Log::info($jsonData);
+        Log::info($validatedData['solution']);
+        $update_data['points'] = $jsonData['result'] ? $exercise->exercisesListsSections->exercisesLists->points : 0;
+        $update_data['solved'] = true;
+
+        $exercise->update($update_data);
+
         return $exercise;
     }
 
