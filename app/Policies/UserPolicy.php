@@ -15,6 +15,14 @@ class UserPolicy extends AbstractPolicy
         return false;
     }
 
+    public function export(User $user): bool
+    {
+        if($user->isTeacher())
+            return true;
+
+        return false;
+    }
+
     /**
      * Determine whether the user can view the model.
      */

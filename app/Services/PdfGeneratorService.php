@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Log;
 use Parsedown;
 use TCPDF;
 
@@ -10,13 +11,16 @@ class PdfGeneratorService extends AbstractService
 
     public function run(...$args)
     {
-        $markdown = '# Heading 1' . PHP_EOL . 'Some **bold** and *italic* text.';
+        $instruction = $args[0];
+        $user = $args[1];
+
+        $markdown = $instruction->markdown;
 
         $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
 
-        $pdf->SetCreator('Your Name');
-        $pdf->SetAuthor('Your Name');
-        $pdf->SetTitle('Markdown to PDF');
+        $pdf->SetCreator($user->fullName());
+        $pdf->SetAuthor($user->fullName());
+        $pdf->SetTitle($instruction->name);
 
         $pdf->AddPage();
 
@@ -27,6 +31,6 @@ class PdfGeneratorService extends AbstractService
 
         $pdf->writeHTML($html);
 
-        $pdf->Output('example.pdf', 'I');
+        $pdf->Output($instruction->name);
     }
 }

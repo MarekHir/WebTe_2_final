@@ -50,6 +50,23 @@ for section in sections:
     listOfStrings = latex_text.split('\n')
     listOfStrings = [s.strip() for s in listOfStrings if s.strip()]
 
+    latex_task = ''
+    lines_of_task = re.findall(r'\\begin{task}(.*?)\\end{task}', section, re.DOTALL)[0].strip().split('\n')
+    equation_started = False
+    for line in lines_of_task:
+        line = line.strip()
+        if('\includegraphics' in line or len(line) == 0):
+            continue
+        if('{equation*}' in line):
+            equation_started = not equation_started
+            latex_task +=  f'{line}\\\\\n'
+        elif(equation_started):
+            latex_task +=  f'{line}\\\\\n'
+        else:
+            latex_task += f'\\text{{{line.strip()}}}\\\\\n'
+
+    parsed_task['task'] = latex_task
+
     # odozva02pr.tex style task (Differential equations)
     if len(listOfStrings) == 6:
         listOfStrings[2] = listOfStrings[2].replace("'", '′')
@@ -65,16 +82,15 @@ for section in sections:
     pattern = r"\\includegraphics{(.*?)}"
     matches = re.findall(pattern, section, re.DOTALL)
     if matches:
-        picture_name = os.path.basename(matches[0])
-        parsed_task['picture_name'] = picture_name
+        parsed_task['picture_name'] = os.path.basename(matches[0])
 
     # Assign whole task description (text + equation)
-    if task_equation is None:
-        parsed_task['task'] = listOfStrings[1]
-    elif len(listOfStrings) == 6:
-        parsed_task['task'] = listOfStrings[1] + ' ' + listOfStrings[2] + ' ' + listOfStrings[3] + ' ' + listOfStrings[4]
-    else:
-        parsed_task['task'] = listOfStrings[1] + ' ' + str(task_equation)
+#     if task_equation is None:
+#         parsed_task['task'] = listOfStrings[1]
+#     elif len(listOfStrings) == 6:
+#         parsed_task['task'] = listOfStrings[1] + ' ' + listOfStrings[2] + ' ' + listOfStrings[3] + ' ' + listOfStrings[4]
+#     else:
+#         parsed_task['task'] = listOfStrings[1] + ' ' + str(task_equation)
 
     # Assign solution if its equation only left side
     if lhs is not None:

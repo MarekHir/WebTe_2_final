@@ -8,6 +8,8 @@ use App\Services\SaveLatexService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ExercisesListController extends Controller
 {
@@ -19,26 +21,13 @@ class ExercisesListController extends Controller
 
     public function index(Request $request)
     {
-        $validated_params = $request->validate([
-            'param' => 'nullable|string',
-            'search_by' => 'nullable|string|in:name',
-            'only_active' => 'nullable|string|in:true,false'
-        ]);
-
-        if (Auth::user()->isStudent() ||
-                array_key_exists('only_active', $validated_params) &&
-                $validated_params['only_active'] === 'true') {
-            return ExercisesList::activeWithValidDates()->with('created_by')->get();
-        }
-
-        if (array_key_exists('param', $validated_params) && array_key_exists('search_by', $validated_params)) {
-            $result = ExercisesList::where($validated_params['search_by'], 'like', '%' . $validated_params['param'] . '%')->get();
-            return response()->json(collect($result)->map(function ($item) {
-                return ['title' => $item['name'], 'value' => $item['id']];
-            })->all());
-        }
-
-        return ExercisesList::with(['created_by'])->get();
+        return QueryBuilder::for(ExercisesList::class)
+            ->select(['exercises_lists.*',
+                DB::raw("(SELECT CONCAT(users.first_name, ' ', users.surname) AS full_name FROM users WHERE users.id = exercises_lists.created_by) as full_name")])
+            ->allowedSorts(['name', 'points', 'is_active', 'deadline', 'initiation', 'updated_at', 'full_name'])
+            ->with(['created_by'])
+            ->where(fn($query) => Auth::user()->isStudent() ? $query->activeWithValidDates() : $query)
+            ->jsonPaginate();
     }
 
     public function store(Request $request)
@@ -97,9 +86,9 @@ class ExercisesListController extends Controller
     public function update(Request $request, ExercisesList $exercises_list)
     {
         $validated_data = $request->validate([
-            'name' => 'required|string',
-            'description' => 'required|string',
-            'points' => 'required|integer',
+            'name' => 'nullable|string',
+            'description' => 'nullable|string',
+            'points' => 'nullable|integer',
             'initiation' => 'nullable|date',
             'deadline' => 'nullable|date',
             'is_active' => 'nullable|boolean',

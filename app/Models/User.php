@@ -31,6 +31,15 @@ class User extends Authenticatable
         return $this->hasMany(ExercisesList::class);
     }
 
+    public function fullName()
+    {
+        return $this->first_name . " " . $this->surname;
+    }
+
+    public function exercises(){
+        return $this->hasMany(Exercises::class, 'created_by');
+    }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -57,7 +66,6 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'created_at',
         'updated_at',
         'email_verified_at'
     ];

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Instructions extends UserStampModel
 {
@@ -33,6 +34,7 @@ class Instructions extends UserStampModel
 
     protected $fillable = [
         'name',
+        'html',
         'description',
         'for_user_type',
         'markdown'

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ExercisesController;
+use App\Http\Controllers\ExportsController;
 use App\Http\Controllers\InstructionsController;
 use App\Http\Controllers\StudentsController;
 use Illuminate\Http\Request;
@@ -28,6 +29,8 @@ Route::localized(function () {
             });
 
             // TODO: allow only implemented methods
+            Route::get('instructions/{instruction}/pdf', [ExportsController::class, 'pdf']);
+            Route::get('students/csv', [ExportsController::class, 'csv']);
             Route::resource('instructions', InstructionsController::class)->except(['create', 'edit']);
             Route::resource('exercises-list', ExercisesListController::class)->except(['create', 'edit']);
             Route::resource('students', StudentsController::class)->only(['index', 'show']);
@@ -37,6 +40,7 @@ Route::localized(function () {
 
     Route::group(['prefix' => 'auth'],
         function () {
+            Route::get('user', [AuthController::class, 'current_user'])->middleware('auth:sanctum');
             Route::post('login', [AuthController::class, 'login']);
             Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
             Route::post('refresh', [AuthController::class, 'refresh']);

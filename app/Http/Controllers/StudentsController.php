@@ -20,14 +20,18 @@ class StudentsController extends Controller
         return QueryBuilder::for(User::class, $request)
             ->select(['users.*',
                 DB::raw('(SELECT COUNT(*) FROM exercises WHERE users.id = exercises.created_by) AS num_of_exercises'),
-                DB::raw('(SELECT COALESCE(SUM(points), 0) FROM exercises WHERE users.id = exercises.created_by) AS total_points')])
-            ->allowedSorts(['id', 'first_name', 'surname', 'num_of_exercises', 'total_points'])
+                DB::raw('(SELECT COALESCE(SUM(points), 0) FROM exercises WHERE users.id = exercises.created_by) AS total_points'),
+                DB::raw('(SELECT COUNT(*) FROM exercises WHERE users.id = exercises.created_by AND exercises.solved = true) AS num_of_solved')])
+            ->allowedSorts(['id', 'first_name', 'surname', 'num_of_exercises', 'total_points', 'num_of_solved'])
             ->where('role', 'student')
-            ->get();
+            ->jsonPaginate();
     }
 
-    public function show(User $student)
+    public function show(Request $request, User $student)
     {
-        return $student;
+        return QueryBuilder::for(User::class, $request)
+            ->allowedIncludes(['exercises.exercisesListsSections.exercisesLists'])
+            ->where('id', $student->id)
+            ->first();
     }
 }

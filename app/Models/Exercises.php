@@ -22,9 +22,22 @@ class Exercises extends UserStampModel
         return $this->belongsTo(ExercisesListsSection::class);
     }
 
+    public function exercisesLists()
+    {
+        return $this->hasOneThrough(
+            ExercisesList::class,
+            ExercisesListsSection::class,
+            'id',
+            'id',
+            'exercises_lists_sections_id',
+            'exercises_lists_id'
+        );
+    }
+
     protected $fillable = [
         'points',
         'solved',
+        'description',
         'exercises_lists_sections_id',
         'solution'
     ];

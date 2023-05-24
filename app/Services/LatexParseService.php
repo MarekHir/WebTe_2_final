@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ExercisesListsSection;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
 
 class LatexParseService extends AbstractService
@@ -18,17 +19,13 @@ class LatexParseService extends AbstractService
         $process->run();
 
         $output = $process->getOutput();
-        $data = str_replace("'", '"', $output);
-
         if($process->getExitCode() !== 0)
             return false;
 
         try {
-            $pattern = '/\{([^}]*)}/';
-            preg_match_all($pattern, $data, $exercise_arrays);
+            $data = json_decode($output, true);
 
-            foreach ($exercise_arrays[0] as $array) {
-                $json = json_decode($array, true);
+            foreach ($data as $json) {
                 $exercise = new ExercisesListsSection();
                 $exercise->section_title = $json['section_title'];
                 $exercise->task = $json['task'];

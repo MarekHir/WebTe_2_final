@@ -16,6 +16,11 @@ class InstructionsPolicy extends AbstractPolicy
         return true;
     }
 
+    public function generate(): bool
+    {
+        return true;
+    }
+
     /**
      * Determine whether the user can view the model.
      */

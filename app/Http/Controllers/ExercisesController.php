@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\SortByRelation;
 use App\Models\Exercises;
 use App\Services\EquationComparatorService;
 use App\Services\GenerateExercisesService;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
@@ -26,12 +30,17 @@ class ExercisesController extends Controller
     {
         return QueryBuilder::for(Exercises::class, $request)
             ->allowedFilters(['points', AllowedFilter::exact('solved'), AllowedFilter::exact('created_by'), 'created_at', 'exercises_lists_sections_id'])
-            ->allowedSorts(['id', 'points', 'solved', 'created_by', 'created_at', 'exercises_lists_sections_id'])
+            ->allowedSorts(['id', 'solved', 'points', 'created_at', 'created_by', 'updated_at',
+                AllowedSort::custom('list_name', new SortByRelation(), 'list_name'),
+                AllowedSort::custom('section', new SortByRelation(), 'section'),
+                AllowedSort::custom('max_points', new SortByRelation(), 'max_points'),
+                AllowedSort::custom('full_name', new SortByRelation(), 'full_name'),
+            ])
             ->allowedFields(['points', 'solved', 'created_by', 'created_at', 'exercises_lists_sections_id'])
-            ->allowedIncludes(['exercisesListsSections'])
-            ->with(['exercisesListsSections', 'exercisesListsSections.exercisesLists'])
-            ->where(fn($query) => Auth::user()->isStudent() ? $query->where('created_by', Auth::id()) : $query)
-            ->get();
+            ->allowedIncludes(['exercisesListsSections', 'created_by'])
+            ->with(['exercisesLists', 'exercisesListsSections'])
+            ->where(fn($query) => Auth::user()->isStudent() ? $query->where('exercises.created_by', Auth::id()) : $query)
+            ->jsonPaginate();
     }
 
 
@@ -48,7 +57,7 @@ class ExercisesController extends Controller
         $service = new GenerateExercisesService();
         $result = $service->run($validatedData['exercises_lists_sections_ids']);
 
-        if(!$result) {
+        if (!$result) {
             // TODO: translate
             return response()->json(['message' => 'Failed to generate exercises'],
                 ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
@@ -61,9 +70,12 @@ class ExercisesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Exercises $exercise)
+    public function show(Request $request, Exercises $exercise)
     {
-        return Exercises::with(['exercisesListsSections', 'exercisesListsSections.exercisesLists'])->find($exercise->id);
+        return QueryBuilder::for(Exercises::class, $request)
+            ->allowedIncludes(['created_by'])
+            ->with(['exercisesListsSections', 'exercisesLists'])
+            ->find($exercise->id);
     }
 
     /**

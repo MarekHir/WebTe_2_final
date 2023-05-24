@@ -73,4 +73,9 @@ class AuthController extends Controller
 
         return response()->json(['info' => trans('auth.refresh')]);
     }
+
+    public function current_user(): JsonResponse
+    {
+        return response()->json(Auth::user());
+    }
 }
