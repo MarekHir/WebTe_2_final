@@ -40,11 +40,6 @@ for section in sections:
     pattern = r"\\begin{solution}(.*?)\\begin{equation\*}(.*?)\\end{equation\*}(.*?)\\end{solution}"
     matches = re.findall(pattern, section, re.DOTALL)
     latex_equation = matches[0][1].strip()
-    latex_equation = latex_equation.replace('y(t)=', '')
-    solution_equation = parse_latex(latex_equation)
-    lhs = None
-    if isinstance(solution_equation, Equality):
-        lhs = solution_equation.lhs
 
     # Split && strip lines
     listOfStrings = latex_text.split('\n')
@@ -84,19 +79,7 @@ for section in sections:
     if matches:
         parsed_task['picture_name'] = os.path.basename(matches[0])
 
-    # Assign whole task description (text + equation)
-#     if task_equation is None:
-#         parsed_task['task'] = listOfStrings[1]
-#     elif len(listOfStrings) == 6:
-#         parsed_task['task'] = listOfStrings[1] + ' ' + listOfStrings[2] + ' ' + listOfStrings[3] + ' ' + listOfStrings[4]
-#     else:
-#         parsed_task['task'] = listOfStrings[1] + ' ' + str(task_equation)
-
-    # Assign solution if its equation only left side
-    if lhs is not None:
-        parsed_task['solution'] = str(lhs)
-    else:
-        parsed_task['solution'] = str(solution_equation)
+    parsed_task['solution'] = str(latex_equation)
 
     parsed_tasks.append(parsed_task)
 

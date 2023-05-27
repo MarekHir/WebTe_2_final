@@ -22,7 +22,7 @@ class ExercisesListsSectionFactory extends Factory
         return [
             'section_title' => fake()->title(),
             'task' => fake()->text(255),
-            'solution' => '((1/12 - 3/2/et) + 1/(6*e(3t))) + 1/(4e*(4t))',
+            'solution' => 'y(t)=\left[ \dfrac{7}{5}-\dfrac{7}{5}e^{-\frac{5}{2}(t-6)}-\dfrac{7}{2}(t-6)e^{-\frac{5}{2}(t-6)} \right] \eta(t-6)',
             //'picture_name' => fake()->unique()->pictureName(),
             'exercises_lists_id' => $exercises_lists_id,
         ];
