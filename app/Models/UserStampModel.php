@@ -12,13 +12,15 @@ abstract class UserStampModel extends Model
     {
         parent::boot();
 
-        static::creating(function ($model) {
-            $model->created_by = Auth::id();
-        });
+        if (!app()->runningInConsole() || !app()->runningInConsole() && app()->runningCommand() !== 'db:seed') {
+            static::creating(function ($model) {
+                $model->created_by = Auth::id();
+            });
 
-        static::saving(function ($model) {
-            $model->updated_by = Auth::id();
-        });
+            static::saving(function ($model) {
+                $model->updated_by = Auth::id();
+            });
+        }
     }
 
     public function created_by(): HasOne

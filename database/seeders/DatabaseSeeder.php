@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Exercises;
+use App\Models\ExercisesList;
+use App\Models\ExercisesListsSection;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -13,7 +15,27 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create();
-        User::factory(10)->teacher()->create();
+        // Default users initialization
+        /*User::factory(1)->admin()->create([
+            'email' => 'adminexample@example.com',
+            'password' => Hash::make('adminpassword'),
+        ]);
+        User::factory(1)->teacher()->create([
+            'email' => 'teacherexample@example.com',
+            'password' => Hash::make('teacherpassword'),
+        ]);
+        User::factory(1)->student()->create([
+            'email' => 'studentexample@example.com',
+            'password' => Hash::make('studentpassword'),
+        ]);*/
+
+        // Random students and teachers initialization
+        User::factory(20)->student()->create();
+        User::factory(3)->teacher()->create();
+
+        // Default exercises initialization
+        ExercisesList::factory(30)->create();
+        ExercisesListsSection::factory(90)->create();
+        Exercises::factory(180)->create();
     }
 }
