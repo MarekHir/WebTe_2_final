@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\DashboardsController;
 use App\Http\Controllers\ExercisesController;
 use App\Http\Controllers\ExportsController;
 use App\Http\Controllers\InstructionsController;
 use App\Http\Controllers\StudentsController;
+use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -29,12 +31,19 @@ Route::localized(function () {
             });
 
             // TODO: allow only implemented methods
+            Route::group(['prefix' => 'dashboard'], function (){
+                Route::get('student', [DashboardsController::class, 'student']);
+                Route::get('teacher', [DashboardsController::class, 'teacher']);
+                Route::get('admin', [DashboardsController::class, 'admin']);
+            });
             Route::get('instructions/{instruction}/pdf', [ExportsController::class, 'pdf']);
             Route::get('students/csv', [ExportsController::class, 'csv']);
             Route::resource('instructions', InstructionsController::class)->except(['create', 'edit']);
             Route::resource('exercises-list', ExercisesListController::class)->except(['create', 'edit']);
             Route::resource('students', StudentsController::class)->only(['index', 'show']);
-            Route::resource('exercises', ExercisesController::class)->except(['create', 'edit']);
+            Route::get('users/{user}', [UsersController::class, 'show']);
+            Route::post('users/{user}', [UsersController::class, 'update']);
+            Route::resource('exercises', ExercisesController::class)->except(['create', 'edit', 'destroy']);
         }
     );
 

@@ -6,11 +6,8 @@ use App\Helpers\SortByRelation;
 use App\Models\Exercises;
 use App\Services\EquationComparatorService;
 use App\Services\GenerateExercisesService;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -83,18 +80,35 @@ class ExercisesController extends Controller
      */
     public function update(Request $request, Exercises $exercise)
     {
-        $validatedData = $request->validate([
-            'solution' => 'required|string',
-            'description' => 'nullable|string',
-        ]);
+        if(Auth::user()->isStudent())
+            $validatedData = $request->validate([
+                'solution' => 'required|string',
+                'description' => 'nullable|string',
+            ]);
+        else if(Auth::user()->isTeacher()) {
+            $validatedData = $request->validate([
+                'points' => 'nullable|string'
+            ]);
+            $exercise->update($validatedData);
+            return $exercise;
+        }
+        else {
+            $validatedData = $request->validate([
+                'solution' => 'required|string',
+                'description' => 'nullable|string',
+                'points' => 'nullable|string'
+            ]);
+            if(array_key_exists('points', $validatedData) && $validatedData['points'] != $exercise->points){
+                $exercise->update($validatedData);
+                return $exercise;
+            }
+        }
 
         $update_data = $validatedData;
 
         $compareService = app(EquationComparatorService::class);
         $jsonData = $compareService->run($exercise->exercisesListsSections->solution, $validatedData['solution']);
 
-        Log::info($jsonData);
-        Log::info($validatedData['solution']);
         $update_data['points'] = $jsonData['result'] ? $exercise->exercisesListsSections->exercisesLists->points : 0;
         $update_data['solved'] = true;
 

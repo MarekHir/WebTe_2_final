@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class UserPolicy extends AbstractPolicy
 {
@@ -47,7 +46,7 @@ class UserPolicy extends AbstractPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return false;
+        return $user->id === $model->id;
     }
 
     /**
@@ -72,5 +71,20 @@ class UserPolicy extends AbstractPolicy
     public function forceDelete(User $user, User $model): bool
     {
         return false;
+    }
+
+    public function studentDashboard(User $user): bool
+    {
+        return $user->isStudent();
+    }
+
+    public function teacherDashboard(User $user): bool
+    {
+        return $user->isTeacher();
+    }
+
+    public function adminDashboard(User $user): bool
+    {
+        return $user->isAdmin();
     }
 }
