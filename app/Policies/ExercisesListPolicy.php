@@ -28,7 +28,7 @@ class ExercisesListPolicy extends AbstractPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isTeacher() ? true : false;
+        return $user->isTeacher();
     }
 
     /**
@@ -65,9 +65,6 @@ class ExercisesListPolicy extends AbstractPolicy
 
     private function updateDeleteRestoreForceDelete(User $user, ExercisesList $exercisesList): bool
     {
-        if($user->isTeacher() && $user->id === $exercisesList->created_by)
-            return true;
-
-        return false;
+        return $user->isTeacher() && $user->id === $exercisesList->created_by;
     }
 }

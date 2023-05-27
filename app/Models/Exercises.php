@@ -17,6 +17,13 @@ class Exercises extends UserStampModel
         });
     }
 
+    public function scopeOnlyCreatedByTeacher($query, $teacher_id)
+    {
+        return $query->join('exercises_lists_sections', 'exercises_lists_sections.id', '=', 'exercises.exercises_lists_sections_id')
+            ->join('exercises_lists', 'exercises_lists.id', '=', 'exercises_lists_sections.exercises_lists_id')
+            ->where('exercises_lists.created_by', $teacher_id);
+    }
+
     public function exercisesListsSections()
     {
         return $this->belongsTo(ExercisesListsSection::class);

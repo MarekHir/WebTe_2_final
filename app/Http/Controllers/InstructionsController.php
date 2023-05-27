@@ -38,7 +38,6 @@ class InstructionsController extends Controller
             'description' => 'required|string|max:255',
             'for_user_type' => 'required|string|in:student,teacher,all',
             'markdown' => 'required|string',
-            'html' => 'required|string'
         ]);
 
         $instruction = new Instructions($validated_data);

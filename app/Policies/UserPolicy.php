@@ -8,18 +8,12 @@ class UserPolicy extends AbstractPolicy
 {
     public function viewAny(User $user): bool
     {
-        if($user->isTeacher())
-            return true;
-
-        return false;
+        return $user->isTeacher();
     }
 
     public function export(User $user): bool
     {
-        if($user->isTeacher())
-            return true;
-
-        return false;
+        return $user->isTeacher();
     }
 
     /**
@@ -27,10 +21,7 @@ class UserPolicy extends AbstractPolicy
      */
     public function view(User $user, User $model): bool
     {
-        if($user->isTeacher() || $user->id === $model->id)
-            return true;
-
-        return false;
+        return $user->isTeacher() || $user->id === $model->id;
     }
 
     /**

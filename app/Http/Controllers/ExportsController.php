@@ -15,7 +15,7 @@ class ExportsController extends Controller
 {
     public function pdf(Instructions $instruction)
     {
-        $this->authorize('generate', Instructions::class);
+        $this->authorize('generate', [Instructions::class, $instruction]);
 
         $service = new PdfGeneratorService();
         $service->run(Instructions::where('id', '=', $instruction->id)->with('created_by')->first(),
@@ -27,7 +27,7 @@ class ExportsController extends Controller
         $this->authorize('export', User::class);
 
         $data = QueryBuilder::for(User::class)
-            ->select(['users.id', 'users.first_name','users.surname',
+            ->select(['users.id', 'users.first_name','users.surname', 'users.email',
                 DB::raw('(SELECT COUNT(*) FROM exercises WHERE users.id = exercises.created_by) AS num_of_exercises'),
                 DB::raw('(SELECT COALESCE(SUM(points), 0) FROM exercises WHERE users.id = exercises.created_by) AS total_points'),
                 DB::raw('(SELECT COUNT(*) FROM exercises WHERE users.id = exercises.created_by AND exercises.solved = true) AS num_of_solved')])
@@ -39,6 +39,7 @@ class ExportsController extends Controller
             ['trans_key' => 'user.id', 'key' => 'id'],
             ['trans_key' => 'user.first_name', 'key' => 'first_name'],
             ['trans_key' => 'user.surname', 'key' => 'surname'],
+            ['trans_key' => 'user.email', 'key' => 'email'],
             ['trans_key' => 'user.num_of_exercises', 'key' => 'num_of_exercises'],
             ['trans_key' => 'user.num_of_solved', 'key' => 'num_of_solved'],
             ['trans_key' => 'user.total_points', 'key' => 'total_points'],

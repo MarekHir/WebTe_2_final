@@ -16,9 +16,9 @@ class InstructionsPolicy extends AbstractPolicy
         return true;
     }
 
-    public function generate(): bool
+    public function generate(User $user, Instructions $instructions): bool
     {
-        return true;
+        return $user->isStudent() && $instructions->isForStudents() || $user->isTeacher();
     }
 
     /**
@@ -26,10 +26,7 @@ class InstructionsPolicy extends AbstractPolicy
      */
     public function view(User $user, Instructions $instructions): bool
     {
-        if($user->isStudent() && $instructions->isForStudents() || $user->isTeacher())
-            return true;
-
-        return false;
+        return $user->isStudent() && $instructions->isForStudents() || $user->isTeacher();
     }
 
     /**
@@ -37,10 +34,7 @@ class InstructionsPolicy extends AbstractPolicy
      */
     public function create(User $user): bool
     {
-        if($user->isTeacher())
-            return true;
-
-        return false;
+        return $user->isTeacher();
     }
 
     /**
@@ -79,9 +73,6 @@ class InstructionsPolicy extends AbstractPolicy
 
     private function updateDeleteRestoreForceDelete(User $user, Instructions $instructions): bool
     {
-        if($user->isTeacher() && $user->id === $instructions->created_by)
-            return true;
-
-        return false;
+        return $user->isTeacher() && $user->id === $instructions->created_by;
     }
 }

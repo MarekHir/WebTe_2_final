@@ -18,8 +18,8 @@ class Instructions extends UserStampModel
     public function scopeForRole(Builder $query, string $role): void
     {
         if ($role === 'student') {
-            $query->where('for_user_type', '=', 'student', 'or')
-                ->where('for_user_type', '=', 'all');
+            $query->where('for_user_type', '=', 'student')
+                ->orWhere('for_user_type', '=', 'all');
         }
     }
 
