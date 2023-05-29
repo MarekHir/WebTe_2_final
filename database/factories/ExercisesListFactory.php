@@ -24,7 +24,7 @@ class ExercisesListFactory extends Factory
         return [
             'file_name' => fake()->word(),
             'base_path' => fake()->filePath(),
-            'name' => fake()->sentence,
+            'name' => fake()->text(16),
             'description' => fake()->text(255),
             //'images' => json_encode([fake()->filePath(), fake()->filePath()]),
             'points' => random_int(1, 100),

@@ -16,11 +16,11 @@ class AuthController extends Controller
     public function registration(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'first_name' => 'required|string|min:2|max:255',
-            'surname' => 'required|string|min:2|max:255',
+            'first_name' => 'required|string|min:5|max:30',
+            'surname' => 'required|string|min:5|max:30',
             'role' => 'required|string|in:student,teacher',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed'
+            'password' => 'required|string|min:8|max:30|confirmed'
         ]);
 
         $data['password'] = Hash::make($data['password']);
@@ -44,8 +44,8 @@ class AuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+            'email' => 'required|email',
+            'password' => 'required|min:8|max:30',
         ]);
 
         if (Auth::attempt($credentials)) {

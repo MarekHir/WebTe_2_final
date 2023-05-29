@@ -22,7 +22,6 @@ use App\Http\Controllers\ExercisesListController;
 |
 */
 
-
 Route::localized(function () {
     Route::group(['middleware' => ['auth:sanctum']],
         function () {
@@ -57,3 +56,4 @@ Route::localized(function () {
         }
     );
 });
+

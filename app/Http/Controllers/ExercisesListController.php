@@ -32,13 +32,12 @@ class ExercisesListController extends Controller
 
     public function store(Request $request)
     {
-        // TODO: validations
         $validatedData = $request->validate([
             'file' => 'required',
-            'name' => 'required|string',
-            'description' => 'required|string',
+            'name' => 'required|string|min:5|max:30',
+            'description' => 'required|string|min:5|max:255',
             'images' => 'nullable|array',
-            'points' => 'required|integer',
+            'points' => 'required|numeric|min:0',
             'initiation' => 'nullable',
             'deadline' => 'nullable',
             'is_active' => 'nullable',
@@ -86,9 +85,9 @@ class ExercisesListController extends Controller
     public function update(Request $request, ExercisesList $exercises_list)
     {
         $validated_data = $request->validate([
-            'name' => 'nullable|string',
-            'description' => 'nullable|string',
-            'points' => 'nullable|integer',
+            'name' => 'nullable|string|min:5|max:30',
+            'description' => 'nullable|string|min:5|max:255',
+            'points' => 'nullable|numeric|min:0',
             'initiation' => 'nullable|date',
             'deadline' => 'nullable|date',
             'is_active' => 'nullable|boolean',
@@ -102,7 +101,6 @@ class ExercisesListController extends Controller
     {
         $exercises_list->delete();
 
-        // TODO: trans
-        return response()->json(['message' => 'Deleted exercise list']);
+        return response()->json(['message' => trans('custom.exercises_list.delete.success')]);
     }
 }

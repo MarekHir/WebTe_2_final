@@ -34,10 +34,10 @@ class InstructionsController extends Controller
     public function store(Request $request)
     {
         $validated_data = $request->validate([
-            'name' => 'required|string|max:64',
-            'description' => 'required|string|max:255',
+            'name' => 'required|string|min:5|max:30',
+            'description' => 'required|string|min:10|max:64',
             'for_user_type' => 'required|string|in:student,teacher,all',
-            'markdown' => 'required|string',
+            'markdown' => 'required|string|min:1',
         ]);
 
         $instruction = new Instructions($validated_data);

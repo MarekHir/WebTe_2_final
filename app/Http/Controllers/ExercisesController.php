@@ -55,13 +55,11 @@ class ExercisesController extends Controller
         $result = $service->run($validatedData['exercises_lists_sections_ids']);
 
         if (!$result) {
-            // TODO: translate
-            return response()->json(['message' => 'Failed to generate exercises'],
+            return response()->json(['message' => trans('custom.exercise.store.error')],
                 ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        // TODO: translate
-        return response()->json(['message' => 'Successfully generated exercises'], 201);
+        return response()->json(['message' => trans('custom.exercise.store.success')], 201);
     }
 
     /**
@@ -83,11 +81,11 @@ class ExercisesController extends Controller
         if(Auth::user()->isStudent())
             $validatedData = $request->validate([
                 'solution' => 'required|string',
-                'description' => 'nullable|string',
+                'description' => 'nullable|string|max:255',
             ]);
         else if(Auth::user()->isTeacher()) {
             $validatedData = $request->validate([
-                'points' => 'nullable|string'
+                'points' => 'required|numeric|min:0|max:' . $exercise->exercisesLists()->first()->points
             ]);
             $exercise->update($validatedData);
             return $exercise;
@@ -95,8 +93,8 @@ class ExercisesController extends Controller
         else {
             $validatedData = $request->validate([
                 'solution' => 'required|string',
-                'description' => 'nullable|string',
-                'points' => 'nullable|string'
+                'description' => 'nullable|string|max:255',
+                'points' => 'required|numeric|min:0|max:' . $exercise->exercisesLists()->first()->points
             ]);
             if(array_key_exists('points', $validatedData) && $validatedData['points'] != $exercise->points){
                 $exercise->update($validatedData);
