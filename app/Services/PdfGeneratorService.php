@@ -26,6 +26,7 @@ class PdfGeneratorService extends AbstractService
 
         $parsedown = new Parsedown();
         $html = $parsedown->text($markdown);
+        $html =  '<style>* {font-family: "freeserif", Serif, serif;}</style>' . $html;
 
         $pdf->SetFont('helvetica', '', 11);
 
