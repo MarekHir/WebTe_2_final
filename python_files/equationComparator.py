@@ -69,7 +69,9 @@ if len(eq1_string) == len(eq2_string):
             else:
                 equations_equality = 0
                 break
-
+else:
+    equations_equality = 0
+    
 if equations_equality:
     print("true")
 else:
