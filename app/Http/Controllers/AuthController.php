@@ -28,6 +28,8 @@ class AuthController extends Controller
         $user = User::create($data);
 
         if($user) {
+            Auth::login($user);
+
             $request->session()->regenerate();
 
             return response()->json([
