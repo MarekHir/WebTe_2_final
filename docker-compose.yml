@@ -3,8 +3,8 @@ services:
     app:
         build:
             args:
-                user: root
-                uid: 0
+                user: ${LOCAL_USER_NAME}
+                uid: ${LOCAL_USER_ID}
             context: ./Dockerfile
             dockerfile: Dockerfile
         image: webte_final
