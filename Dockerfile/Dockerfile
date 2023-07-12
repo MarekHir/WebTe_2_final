@@ -4,11 +4,13 @@ FROM php:8.2-fpm
 ARG user
 ARG uid
 
+WORKDIR ~
+
 COPY requirements.txt .
 
 # Install additional dependencies
-RUN apt-get update  \
-    && apt-get install -y \
+RUN apt update  \
+    && apt install -y \
         git \
         curl \
         libpng-dev \
@@ -17,12 +19,28 @@ RUN apt-get update  \
         zip \
         unzip \
         libpq-dev \
+        build-essential zlib1g-dev  \
+        libncurses5-dev  \
+        libgdbm-dev  \
+        libnss3-dev  \
+        libssl-dev  \
+        libreadline-dev  \
+        libffi-dev  \
+        libsqlite3-dev  \
+        wget  \
+        libbz2-dev \
         python3 \
         python3-pip \
-    && pip3 install -r requirements.txt
+        python3.11-venv
+
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+RUN pip3 install -r requirements.txt
 
 # Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
 RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql  \

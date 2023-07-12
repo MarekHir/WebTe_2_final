@@ -24,11 +24,12 @@ services:
             - 127.0.0.1:8000:80
         volumes:
             - ./:/var/www
-            - ./docker-compose/nginx:/etc/nginx/conf.d/
+            - ./Dockerfile/nginx:/etc/nginx/conf.d/
         networks:
             - webte_final
     redis:
         image: 'redis:alpine'
+        container_name: webte_final-redis
         volumes:
             - 'webte_final-redis:/data'
         networks:
