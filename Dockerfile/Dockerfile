@@ -50,9 +50,9 @@ RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql  \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Create system user to run Composer and Artisan Commands
-RUN if [$uid != 0] then useradd -G www-data,root -u $uid -d /home/$user $user fi
-RUN if [$uid != 0] then mkdir -p /home/$user/.composer && \
-    chown -R $user:$user /home/$user fi
+RUN if [$uid != 0] ; then useradd -G www-data,root -u $uid -d /home/$user $user ; fi
+RUN if [$uid != 0] ; then mkdir -p /home/$user/.composer && \
+    chown -R $user:$user /home/$user ; fi
 
 # Set working directory
 WORKDIR /var/www
