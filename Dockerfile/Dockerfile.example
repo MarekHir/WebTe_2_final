@@ -62,4 +62,3 @@ RUN if [$uid != 0] ; then mkdir -p /home/$user/.composer && \
 WORKDIR /var/www
 
 USER $user
-
