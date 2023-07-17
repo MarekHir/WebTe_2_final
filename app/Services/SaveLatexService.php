@@ -32,14 +32,16 @@ class SaveLatexService extends AbstractService
         Storage::setVisibility('public/exercises', 'public');
         Storage::setVisibility('public/' . $base_path, 'public');
 
-        if(!empty($images))
+        if (!empty($images))
             Storage::makeDirectory($base_images_path);
 
         $file_path = $latex_file->storeAs($base_path, $file_name);
 
         foreach ($images as $image) {
-            $images_paths[] = $prepend_path . $image->storeAs($base_images_path, $image->getClientOriginalName());
-            $image->storePublicAs('public/' . $base_path, $image->getClientOriginalName());
+            $image_name = $image->getClientOriginalName();
+            $images_paths[] = $prepend_path . $image->storeAs('public/' . $base_path, $image_name);
+            $image->storeAs($base_images_path, $image_name);
+            Storage::setVisibility('public/' . $base_path . '/' . $image_name, 'public');
         }
 
 
