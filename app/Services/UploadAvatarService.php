@@ -19,7 +19,11 @@ class UploadAvatarService extends AbstractService
 
         Storage::delete(Storage::allFiles('public/' . $user_directory));
 
-        Storage::directoryMissing('public/' . $user_directory) ? Storage::makeDirectory('public/' . $user_directory) : null;
+        if(Storage::directoryMissing('public/' . $user_directory)) {
+            Storage::makeDirectory('public/' . $user_directory);
+            Storage::setVisibility('public/users', 'public');
+            Storage::setVisibility('public/' . $user_directory, 'public');
+        }
 
         $image_name = Str::random() . '.' . 'png';
         // Create a circular mask

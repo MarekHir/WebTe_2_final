@@ -29,7 +29,9 @@ class SaveLatexService extends AbstractService
 
         Storage::makeDirectory($base_path);
         Storage::makeDirectory('public/' . $base_path);
-//        Storage::setVisibility('public/' . $base_path, 'public');
+        Storage::setVisibility('public/exercises', 'public');
+        Storage::setVisibility('public/' . $base_path, 'public');
+
         if(!empty($images))
             Storage::makeDirectory($base_images_path);
 
